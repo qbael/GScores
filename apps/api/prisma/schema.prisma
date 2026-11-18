@@ -7,3 +7,21 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model ExamResult {
+  examYear            Int      @map("exam_year") @db.SmallInt
+  registrationNumber  String   @map("registration_number") @db.VarChar(8)
+  mathematics         Decimal? @db.Decimal(4, 2)
+  literature          Decimal? @db.Decimal(4, 2)
+  foreignLanguage     Decimal? @map("foreign_language") @db.Decimal(4, 2)
+  physics             Decimal? @db.Decimal(4, 2)
+  chemistry           Decimal? @db.Decimal(4, 2)
+  biology             Decimal? @db.Decimal(4, 2)
+  history             Decimal? @db.Decimal(4, 2)
+  geography           Decimal? @db.Decimal(4, 2)
+  civicEducation      Decimal? @map("civic_education") @db.Decimal(4, 2)
+  foreignLanguageCode String?  @map("foreign_language_code") @db.VarChar(2)
+
+  @@id([examYear, registrationNumber])
+  @@map("exam_results")
+}

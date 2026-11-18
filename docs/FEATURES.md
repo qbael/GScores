@@ -2,7 +2,7 @@
 
 References: [Assignment](../README.md), [2024 dataset](../data/diem_thi_thpt_2024.csv), [UI mockup](../mockup-ui.png), [architecture](ARCHITECTURE.md).
 
-UI design: [interactive prototype, screen inventory, and states](design/README.md). This is a design artifact, not an implemented application.
+UI design: [interactive prototype, screen inventory, and states](design/README.md). The React implementation follows this design; see the README for current setup and checks.
 
 ## 1. Requirements
 
@@ -42,15 +42,13 @@ Use the mockup's sidebar and score-lookup form, with the supplied chart-and-summ
 
 | Dashboard area | Content |
 |---|---|
-| Header | G-Scores, year 2024, and selected subject/combination. Offer only available years. |
-| Summary cards | Total candidates, available subject count, and selected subject's valid count and mean. |
-| Subject overview | Valid count, missing count, mean, minimum, and maximum for each subject. |
-| Four-level report | Stacked or grouped columns by subject, with explicit score-interval labels. |
-| Subject distribution | Selected subject histogram and adjacent summary. |
-| Combination overview | Selected combination's eligible count, mean total, highest total, distribution, and top-10 preview. |
-| Data state | Source filename and dataset availability derived from score rows. |
+| Header | G-Scores and year 2024. Offer only available years. |
+| Summary cards | Total candidates, available subject count, total valid subject scores and total missing subject scores across all subjects. Zero scores remain valid. |
+| Data state | Source filename and dataset availability derived from score rows; loading, empty, error and retry states. |
 
-Charts require titles, axis labels, tooltips with counts and percentages, and readable tables or accessible text. Do not rely on color alone. Show distinct loading, empty, and error states; failed requests need a retry action.
+Dashboard contains only overall statistics, without subject/combination filters, detailed charts or leaderboards. Subject summaries, the four-level report, selected-subject histograms and the all-subject table belong to `/reports`. Combination statistics, total-score distributions and top 10 belong to `/rankings`. Each page's components live in its matching `features/dashboard`, `features/reports`, `features/rankings` or `features/scores` folder.
+
+Charts require titles, axis labels, tooltips with counts and percentages, and readable tables or accessible text. Show every histogram interval label on the horizontal axis; allow horizontal scrolling when needed so labels remain readable. Do not rely on color alone. Show distinct loading, empty, and error states; failed requests need a retry action.
 
 ## 3. Statistical rules
 
@@ -86,7 +84,7 @@ Dataset baseline: **1,061,605 candidates** with unique eight-digit registration 
 | 6 to below 8 | `6 <= score < 8` |
 | 8 to 10 | `8 <= score <= 10` |
 
-The four counts must sum to the subject's valid-score count. Do not interpret these bands as an official graduation pass/fail decision.
+The four counts must sum to the subject's valid-score count. Chart lengths and the numeric axis show candidate counts; percentages remain available in tooltips and the table. Do not interpret these bands as an official graduation pass/fail decision.
 
 ### 3.3 Per-subject histogram
 

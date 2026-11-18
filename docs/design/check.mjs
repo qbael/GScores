@@ -68,6 +68,8 @@ try {
     await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:prefix==='mobile'});
     for(const [route,name] of [['/','overview'],['/scores','score-lookup'],['/reports','subject-reports'],['/rankings','combination-rankings']]){
       await navigate(route);
+      assert.equal(await evaluate('document.querySelectorAll(".page-heading > h1.eyebrow").length'),1);
+      assert.equal(await evaluate('document.querySelectorAll(".page-heading .description").length'),0);
       assert.equal(await evaluate('document.querySelectorAll("nav a[aria-current=page]").length'),1);
       assert.ok(await evaluate('document.documentElement.scrollWidth <= innerWidth'),prefix+' overflow: '+route);
       if(route==='/scores'){

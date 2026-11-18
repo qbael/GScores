@@ -2,7 +2,7 @@
   "name": "g-scores",
   "version": "0.1.0",
   "private": true,
-  "description": "G-Scores TypeScript monolith bootstrap",
+  "description": "G-Scores exam score lookup and reports",
   "workspaces": [
     "apps/api",
     "apps/web"
@@ -11,15 +11,20 @@
     "node": ">=24 <25"
   },
   "scripts": {
-    "predev": "npm run build --workspace=@g-scores/api",
+    "predev": "npm run db:migrate && npm run build --workspace=@g-scores/api",
     "dev": "node scripts/dev.mjs",
     "test:dev": "node --test scripts/dev.test.mjs",
     "db:generate": "npm run db:generate --workspace=@g-scores/api",
     "db:migrate": "npm run db:migrate --workspace=@g-scores/api",
     "check": "npm run check --workspaces",
     "build": "npm run build --workspaces",
-    "test": "npm run test:dev",
-    "start": "npm run start --workspace=@g-scores/api"
+    "test": "npm run test:unit && npm run test:api && npm run test:dev",
+    "start": "npm run start --workspace=@g-scores/api",
+    "prestart": "npm run db:migrate",
+    "pretest": "npm run db:migrate && npm run build --workspace=@g-scores/api",
+    "test:unit": "node --test tests/domain.test.mts",
+    "test:api": "node --env-file-if-exists=apps/api/.env --test tests/api.test.mts",
+    "test:web": "node --test tests/web.test.mts"
   },
   "devDependencies": {
     "@types/node": "24.19.2",

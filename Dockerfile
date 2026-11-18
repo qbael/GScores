@@ -16,8 +16,8 @@ ENV DATABASE_URL=postgresql://build:build@127.0.0.1:5432/g_scores
 RUN npm run build
 
 FROM build AS test
-COPY scripts ./scripts
-RUN npm test
+COPY tests ./tests
+RUN npm run test:unit
 
 FROM build AS production-dependencies
 RUN npm prune --omit=dev
@@ -35,4 +35,4 @@ COPY --from=build /app/apps/api/prisma ./apps/api/prisma
 COPY --from=build /app/apps/api/prisma.config.ts ./apps/api/prisma.config.ts
 USER node
 EXPOSE 3000
-CMD ["node", "apps/api/dist/main.js"]
+CMD ["sh", "-c", "npm run db:migrate && exec node apps/api/dist/main.js"]

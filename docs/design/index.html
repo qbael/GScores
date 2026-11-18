@@ -1,88 +1,3982 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="color-scheme" content="light">
-<title>G-Scores · Dashboard</title>
-<style>
-:root{--ink:#183153;--muted:#52647b;--nav:#142c4b;--blue:#245edb;--blue-soft:#edf3ff;--gold:#f0c45a;--bg:#f3f6fa;--surface:#fff;--line:#dce4ef;--low:#8a98ac;--middle:#dfaa43;--good:#558fbb;--high:#245edb;--danger:#b52c3b;--danger-bg:#fff0f1;--success:#19724e;--radius:14px;--shadow:0 3px 14px #18315305;font-family:"Noto Sans",Arial,sans-serif;font-size:14px;color:var(--ink);background:var(--bg);font-synthesis:none}
-*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button,a,select,input{touch-action:manipulation}button,a{ -webkit-tap-highlight-color:transparent}button,select{cursor:pointer}button:disabled{cursor:wait;opacity:.65}a{color:var(--blue);text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}h1,h2,h3,p{margin:0}h1,h2,h3{text-wrap:balance}h1{font-size:32px;letter-spacing:-1px;line-height:1.3;font-weight:750}h2{font-size:17px;letter-spacing:-.35px;line-height:1.5}h3{font-size:14px}p{line-height:1.75;max-width:68ch}small,.small{font-size:12px}.muted{color:var(--muted)}.mono,.metric-value,td{font-variant-numeric:tabular-nums}.mono{font-family:"Noto Sans Mono","DejaVu Sans Mono",monospace;font-size:.95em;letter-spacing:.03em}.eyebrow{font-size:10px;font-weight:750;letter-spacing:1.5px;text-transform:uppercase}.skip{position:fixed;z-index:20;top:-80px;left:12px;padding:12px;background:var(--surface)}.skip:focus{top:8px}
-.sidebar{position:fixed;inset:0 auto 0 0;width:224px;z-index:5;background:var(--nav);color:#fff;padding:32px 20px;display:flex;flex-direction:column;gap:42px}.brand{display:flex;gap:12px;align-items:center;color:inherit}.brand-mark{width:38px;height:38px;border-radius:11px;background:var(--gold);color:var(--nav);font:bold 28px Georgia,serif;display:grid;place-items:center}.brand-name{font-size:23px;font-weight:750;letter-spacing:-.8px}.brand-caption{font-size:10px;letter-spacing:1.6px;color:#bdcce0;margin-top:3px}.sidebar-label{color:#b4c5dd;margin:0 14px 12px}.nav{display:grid;gap:8px}.nav a{color:#cbd7e7;display:flex;align-items:center;gap:12px;min-height:48px;padding:12px 14px;border-radius:9px;font-size:13px;font-weight:600}.nav a:hover{background:#203c5e}.nav a[aria-current="page"]{color:#fff;background:#294867}.nav a[aria-current="page"] svg{color:var(--gold)}.icon{width:20px;height:20px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.sidebar-end{margin-top:auto;display:grid;gap:18px}.dataset-badge{border:1px solid #3b5575;border-radius:10px;padding:16px;display:grid;gap:7px}.dataset-badge .eyebrow{color:#bdcce0}.dataset-badge strong{font-size:20px}.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:#8edcba;margin-right:6px}.sidebar-foot{font-size:11px;color:#bdcce0;padding:0 5px;line-height:1.7}.sidebar a:focus-visible{outline-color:var(--gold)}
-.shell{margin-left:224px;min-width:0}.topbar{height:80px;padding:0 38px;border-bottom:1px solid var(--line);background:var(--surface);display:flex;justify-content:space-between;align-items:center;gap:20px}.breadcrumb{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:12px}.breadcrumb strong{font-weight:600;color:var(--ink)}.year{display:flex;align-items:center;gap:10px;font-size:12px}.year select{height:36px;min-width:86px;border:1px solid var(--line);border-radius:8px;padding:0 12px;background:var(--surface);color:var(--ink);font-weight:650}.year select:disabled{opacity:1;cursor:default}.edition{background:var(--blue-soft);color:var(--blue);font-size:11px;padding:6px 9px;border-radius:6px;font-weight:600}
-main{padding:32px 38px 36px;outline:none;display:grid;gap:24px;max-width:1600px;margin:auto}.page-heading{display:flex;justify-content:space-between;align-items:center;gap:20px}.heading-copy{display:grid;gap:7px}.page-heading .eyebrow{color:var(--blue);margin-bottom:1px}.description{font-size:13px;color:var(--muted)}.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);min-height:42px;border-radius:8px;padding:10px 15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:650;white-space:nowrap}.btn:hover{background:var(--blue-soft);border-color:#b6c9eb}.btn-primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn-primary:hover{background:#194cbb;color:#fff}.btn .icon{width:16px;height:16px}.inline-link{font-size:12px;font-weight:650;display:inline-flex;align-items:center;gap:6px}.inline-link .icon{width:15px;height:15px}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.metric{padding:21px 22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);display:grid;gap:10px}.metric-label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted)}.metric-label .icon{color:var(--blue);width:17px;height:17px}.metric-value{font-size:28px;letter-spacing:-1px;line-height:1.2;font-weight:730}.metric-note{font-size:11px;color:var(--muted)}.metric-note b{color:var(--success);font-weight:600}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0;overflow:hidden}.panel-pad{padding:24px}.panel-header{padding:23px 24px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.panel-header .sub{margin-top:5px;color:var(--muted);font-size:11px;line-height:1.7}.panel-header>div{min-width:0}.section-top{display:flex;align-items:center;justify-content:space-between;gap:15px}.select-label{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}.filter{height:38px;border-radius:8px;border:1px solid var(--line);background:var(--surface);padding:0 30px 0 11px;color:var(--ink);min-width:122px;font-size:12px}.split{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:24px}.chart-body{padding:22px 24px 16px;display:grid;gap:16px}.chart-caption{font-size:11px;color:var(--muted)}.hist{height:210px;display:flex;min-width:0;gap:12px}.y-axis{width:42px;flex-shrink:0;display:flex;flex-direction:column;justify-content:space-between;font-size:10px;color:var(--muted);padding-bottom:1px;text-align:right}.plot{display:flex;gap:3px;align-items:stretch;flex:1;min-width:0;border-bottom:1px solid #b7c5d8;background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--line) calc(25% - 1px),var(--line) 25%)}.bin{height:100%;flex:1;min-width:0;display:flex;align-items:end;position:relative}.bar{width:100%;min-height:0;background:#a7c0ed;border:1px solid #83a8e4;border-bottom:0;border-radius:3px 3px 0 0}.bin.peak .bar{background:var(--blue);border-color:var(--blue)}.bin:hover .bar,.bin:focus .bar{background:#477adf}.bin:focus-visible{outline:2px solid var(--blue);outline-offset:2px}.x-axis{display:flex;justify-content:space-between;padding-left:54px;color:var(--muted);font-size:10px}.hist-hint{padding-left:54px;font-size:11px;color:var(--muted);min-height:32px;line-height:1.5}.hist-hint strong{color:var(--ink)}.chart-foot{border-top:1px solid var(--line);padding:13px 24px;display:flex;justify-content:space-between;gap:16px;font-size:10px;color:var(--muted)}.stat-list{display:grid;gap:0;padding:8px 24px 17px}.stat-list div{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 0;border-bottom:1px solid var(--line);font-size:12px}.stat-list div:last-child{border:0}.stat-list dt{color:var(--muted)}.stat-list dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}.callout{margin:0 24px 22px;background:var(--blue-soft);padding:12px 14px;border-radius:8px;font-size:11px;line-height:1.75;color:#304f80}.callout strong{color:var(--blue)}.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--muted)}.legend span{display:flex;gap:6px;align-items:center}.swatch{width:9px;height:9px;display:inline-block;border-radius:2px}.band-chart{display:grid;gap:15px;padding:24px}.band-row{display:grid;grid-template-columns:80px minmax(0,1fr) 76px;gap:16px;align-items:center;font-size:11px}.band-label{font-weight:600}.band-track{display:flex;gap:2px;height:24px;border-radius:4px;overflow:hidden;background:var(--bg)}.band-segment{min-width:0}.band-total{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}.band-axis{margin:0 92px 0 96px;display:flex;justify-content:space-between;color:var(--muted);font-size:10px}.table-wrap{overflow-x:auto;overscroll-behavior-inline:contain}.data-table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap;text-align:left}.data-table th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:650;background:#f8fafd;padding:13px 20px;border-bottom:1px solid var(--line)}.data-table td{padding:15px 20px;border-bottom:1px solid #edf1f6}.data-table tbody tr:last-child td{border:0}.data-table tbody tr:hover{background:#f8faff}.data-table td.num,.data-table th.num{text-align:right}.data-table th:first-child,.data-table td:first-child{padding-left:24px}.table-title{padding:22px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}.table-note{padding:14px 24px;background:#f8fafd;border-top:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.8}.subject-cell{display:inline-flex;align-items:center;gap:10px;font-weight:650}.subject-mark{width:28px;height:28px;background:var(--blue-soft);color:var(--blue);border-radius:7px;display:grid;place-items:center;font-size:11px}.rank{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:6px;color:var(--muted);font-weight:700}.rank-1{background:#fff1bf;color:#805800}.rank-2{background:#eaf0f7;color:#465b77}.rank-3{background:#f5e7da;color:#82502b}.total-score{font-weight:750;color:var(--blue)}.rank-preview{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:0}.preview-side{border-left:1px solid var(--line);padding:24px;display:grid;align-content:start;gap:18px}.preview-side .metric-value{font-size:26px}.preview-side .mini-stat{display:grid;gap:6px}.group-description{font-size:12px;color:var(--muted);line-height:1.8}.group-tabs{display:flex;flex-wrap:wrap;gap:10px}.group-tab{display:grid;gap:6px;flex:1;min-width:108px;text-align:left;border:1px solid var(--line);border-radius:10px;padding:15px 16px;color:var(--ink);background:var(--surface)}.group-tab strong{font-size:16px}.group-tab span{font-size:10px;color:var(--muted)}.group-tab[aria-pressed="true"]{border:2px solid var(--blue);background:var(--blue-soft);padding:14px 15px;color:var(--blue)}.group-tab:hover{background:var(--blue-soft)}.group-rule{display:flex;gap:10px;align-items:flex-start;padding:14px 18px;background:var(--blue-soft);border-radius:10px;font-size:12px;line-height:1.8}.group-rule .icon{margin-top:2px;color:var(--blue)}.group-rule strong{font-weight:650}
-.lookup-layout{display:grid;grid-template-columns:330px minmax(0,1fr);gap:24px;align-items:start}.lookup-form{display:grid;gap:20px;padding:24px}.field{display:grid;gap:9px}.field label{font-weight:650;font-size:12px}.field input{width:100%;height:48px;border:1px solid #b8c7da;border-radius:8px;padding:12px;color:var(--ink);background:var(--surface);font-size:16px}.field input::placeholder{color:#7e8da1;font-size:13px}.field input[aria-invalid="true"]{border-color:var(--danger)}.helper{font-size:11px;line-height:1.8;color:var(--muted)}.field-error{font-size:11px;line-height:1.7;color:var(--danger);min-height:0}.samples{display:flex;flex-wrap:wrap;gap:8px}.sample-btn{border:1px solid var(--line);border-radius:5px;background:var(--bg);padding:7px 8px;font-size:11px;color:var(--blue)}.lookup-note{border-top:1px solid var(--line);padding:19px 24px;font-size:11px;line-height:1.9;color:var(--muted)}.lookup-note strong{color:var(--ink)}.result-empty{min-height:430px;display:grid;align-content:center;justify-items:center;text-align:center;padding:40px 24px;gap:15px}.empty-icon{width:68px;height:68px;border-radius:20px;display:grid;place-items:center;color:var(--blue);background:var(--blue-soft);margin-bottom:4px}.empty-icon .icon{width:30px;height:30px}.result-empty p{font-size:12px;max-width:43ch;color:var(--muted)}.result-head{padding:24px;display:flex;justify-content:space-between;gap:14px;align-items:center;border-bottom:1px solid var(--line)}.result-head h2{font-size:23px;margin-top:5px}.status-label{font-size:10px;padding:6px 9px;background:#e9f5ef;color:var(--success);border-radius:5px;white-space:nowrap}.score-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));padding:8px 24px 24px;gap:0 20px}.subject-score{padding:22px 0 17px;border-bottom:1px solid var(--line);display:grid;gap:10px}.subject-score h3{font-size:11px;color:var(--muted);font-weight:500}.subject-score strong{font-size:25px;letter-spacing:-.5px;font-variant-numeric:tabular-nums}.subject-score .missing{font-size:12px;line-height:1.8;color:var(--muted);font-weight:500;letter-spacing:0}.subject-score .point-scale{font-size:11px;color:var(--muted);font-weight:400}.results-note{padding:0 24px 22px;font-size:11px;color:var(--muted);line-height:1.8}.result-group{margin:0 24px 24px;padding:16px;background:var(--blue-soft);border-radius:9px;display:flex;justify-content:space-between;align-items:center;gap:14px;font-size:12px}.result-group strong{font-size:20px;color:var(--blue)}.error-icon{color:var(--danger);background:var(--danger-bg)}.page-state{min-height:480px}.skeleton-layout{display:grid;gap:20px;padding:24px}.skeleton-row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}.skeleton{background:#e9eef5;border-radius:8px;height:86px}.skeleton-chart{height:260px;background:repeating-linear-gradient(to top,#edf1f6 0,#edf1f6 1px,transparent 1px,transparent 65px);border-bottom:1px solid var(--line)}.loading-message{font-size:12px;color:var(--muted)}.footer{display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;font-size:10px;color:var(--muted);padding:0 38px 24px;max-width:1600px;margin:auto}.review-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #e4d9b7;background:#fff9e9;color:#6e571c;padding:10px 38px;font-size:10px;line-height:1.6}.review-bar label{display:flex;align-items:center;gap:8px;white-space:nowrap}.review-bar select{max-width:150px;background:#fffdf7;border:1px solid #d9cba7;border-radius:5px;color:#6e571c;padding:5px;font-size:10px}.review-bar strong{font-size:10px;letter-spacing:.5px}.mobile-brand{display:none}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.chart-details{padding:0 24px 18px}.chart-details summary{font-size:11px;color:var(--blue);cursor:pointer;width:max-content;padding:6px 0}.chart-details .data-table{margin-top:10px}.chart-details .data-table th,.chart-details .data-table td{padding:10px 13px}.chart-details .table-wrap{max-height:290px}.notice{font-size:11px;border:1px solid var(--line);border-radius:8px;padding:12px 16px;background:var(--surface);color:var(--muted);line-height:1.8}
-@media(min-width:1700px){main{padding-top:42px}.topbar{padding-inline:max(38px,calc((100vw - 224px - 1524px)/2))}}
-@media(max-width:1200px){.sidebar{width:200px;padding-inline:14px}.shell{margin-left:200px}main{padding:28px 24px}.topbar{padding-inline:24px}.footer,.review-bar{padding-inline:24px}.split{grid-template-columns:minmax(0,1fr) 245px;gap:16px}.metric{padding:18px}.metric-value{font-size:24px}.panel-header,.chart-body{padding-inline:20px}.lookup-layout{grid-template-columns:285px minmax(0,1fr)}.rank-preview{grid-template-columns:minmax(0,1fr) 220px}.lookup-form{padding:20px}.score-grid{gap:0 12px;padding-inline:20px}.subject-score h3{min-height:26px}}
-@media(max-width:950px){.sidebar{width:178px;padding:28px 12px;gap:32px}.shell{margin-left:178px}.brand{gap:8px}.brand-name{font-size:21px}.brand-mark{width:32px;height:32px;font-size:24px}.brand-caption{font-size:8px}.nav a{font-size:12px;padding-inline:10px}.sidebar-label{font-size:9px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:minmax(0,1fr)}.stat-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:0 25px}.stat-list div{align-items:flex-start;flex-direction:column;gap:7px}.stat-list div:last-child{border-bottom:1px solid var(--line)}.callout{margin-top:0}.rank-preview{grid-template-columns:minmax(0,1fr)}.preview-side{border-left:0;border-top:1px solid var(--line);grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.lookup-layout{grid-template-columns:minmax(0,1fr)}.lookup-form{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}.lookup-form h2,.lookup-form>.helper{grid-column:1/-1}.lookup-form .btn-primary{align-self:start}.lookup-form .field{grid-column:1/-1}.lookup-form>.sample-area{grid-column:1/-1}.score-grid{gap:0 20px}.page-heading{align-items:flex-start}.page-heading>.btn{display:none}.review-bar{align-items:flex-start}}
-@media(max-width:640px){.sidebar{position:static;width:auto;padding:0;gap:0;background:var(--surface);color:var(--ink);border-bottom:1px solid var(--line)}.sidebar>.brand,.sidebar-label,.sidebar-end{display:none}.nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;padding:0 8px}.nav a{flex-direction:column;justify-content:center;gap:6px;padding:12px 2px 10px;min-height:65px;color:var(--muted);border-radius:0;font-size:10px}.nav a:hover{background:var(--blue-soft)}.nav a[aria-current="page"]{background:var(--blue-soft);color:var(--blue);box-shadow:inset 0 -3px var(--blue)}.nav a[aria-current="page"] svg{color:var(--blue)}.nav .icon{width:19px;height:19px}.shell{margin-left:0;display:flex;flex-direction:column}.mobile-brand{display:flex;justify-content:space-between;align-items:center;padding:17px 20px;background:var(--surface);border-bottom:1px solid var(--line)}.mobile-brand .brand-caption{color:var(--muted);font-size:8px}.mobile-brand .brand-mark{width:32px;height:32px}.mobile-brand .brand-name{font-size:21px}.topbar{height:51px;padding:0 20px;gap:10px;order:0}.breadcrumb{font-size:10px;gap:6px}.year{font-size:10px;gap:7px}.year select{height:29px;font-size:11px;min-width:69px;padding-inline:8px}.edition{display:none}main{padding:24px 18px;gap:20px;max-width:100%;width:100%}h1{font-size:27px}.description{font-size:12px}.page-heading{gap:12px}.page-heading .eyebrow{font-size:9px}.metrics{gap:10px}.metric{padding:15px 14px;gap:9px;border-radius:11px}.metric-label{font-size:10px;gap:4px}.metric-label .icon{width:14px;height:14px}.metric-value{font-size:24px}.metric-note{font-size:9px;line-height:1.6}.panel{border-radius:11px}.panel-header{padding:18px 17px 0;gap:10px;flex-wrap:wrap}.panel-header h2{font-size:15px}.panel-header .sub{font-size:10px}.filter{font-size:11px;height:35px;min-width:100px}.chart-body{padding:20px 17px 14px;gap:12px}.hist{height:174px;gap:8px}.y-axis{width:34px;font-size:9px}.plot{gap:2px}.bar{border-radius:2px 2px 0 0}.x-axis,.hist-hint{padding-left:42px;font-size:9px}.chart-caption{font-size:10px}.chart-foot{padding:12px 17px;flex-wrap:wrap;gap:5px;font-size:9px}.chart-details{padding:0 17px 15px}.chart-details summary{font-size:10px}.stat-list{padding:6px 17px 15px;gap:0 14px;grid-template-columns:repeat(2,minmax(0,1fr))}.stat-list div{font-size:11px}.callout{margin:0 17px 17px;font-size:10px}.section-top{align-items:flex-start;gap:12px;flex-direction:column}.legend{gap:9px;font-size:9px}.band-chart{padding:20px 17px;gap:13px}.band-row{grid-template-columns:51px minmax(0,1fr) 54px;gap:8px;font-size:9px}.band-track{height:21px;gap:1px}.band-axis{margin:0 62px 0 59px;font-size:8px}.table-title{padding:18px 17px;align-items:flex-start}.table-title h2{font-size:15px}.inline-link{font-size:10px}.data-table th{font-size:9px;padding:12px 14px}.data-table td{font-size:11px;padding:13px 14px}.data-table th:first-child,.data-table td:first-child{padding-left:17px}.subject-cell{gap:8px}.subject-mark{width:24px;height:24px}.table-note{padding:12px 17px;font-size:10px}.preview-side{padding:18px 17px;gap:10px}.preview-side .metric-value{font-size:20px}.preview-side .metric-note{font-size:9px}.preview-side .mini-stat{gap:7px}.group-tabs{gap:8px}.group-tab{min-width:calc(33.333% - 8px);padding:13px 12px}.group-tab[aria-pressed="true"]{padding:12px 11px}.group-tab strong{font-size:14px}.group-tab span{font-size:9px}.group-rule{padding:13px 14px;font-size:10px}.lookup-layout{gap:18px}.lookup-form{padding:20px;display:grid;grid-template-columns:minmax(0,1fr)}.lookup-form>*{grid-column:1!important}.lookup-form>.helper{font-size:11px}.lookup-note{padding:16px 20px;font-size:10px}.result-empty{min-height:315px;padding:30px 20px}.result-empty p{font-size:11px}.result-head{padding:20px}.result-head h2{font-size:21px}.status-label{font-size:9px}.score-grid{padding:4px 20px 20px;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px}.subject-score strong{font-size:24px}.subject-score h3{min-height:0;font-size:10px}.subject-score{padding:18px 0;gap:10px}.subject-score .missing{font-size:10px}.results-note{padding:0 20px 18px;font-size:10px}.result-group{margin:0 20px 20px;padding:13px;font-size:11px}.footer{padding:0 18px 20px;font-size:9px;gap:5px}.footer .source-name{overflow-wrap:anywhere}.review-bar{padding:12px 18px;flex-direction:column;gap:9px;font-size:9px}.review-bar strong{font-size:9px}.review-bar label{font-size:10px}.notice{font-size:10px;padding:10px 13px}.skeleton-row{grid-template-columns:repeat(2,1fr)}.page-state{min-height:350px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
-</style>
-</head>
-<body>
-<a class="skip" href="#main">Skip to main content</a>
-<div class="mobile-brand"><a class="brand" href="#/"><span class="brand-mark" aria-hidden="true">g.</span><span><span class="brand-name">G-Scores</span><span class="brand-caption" style="display:block">SCORES IN FOCUS</span></span></a><span class="edition">EXAM 2024</span></div>
-<aside class="sidebar" aria-label="Application navigation">
-<a class="brand" href="#/" aria-label="G-Scores, return to dashboard"><span class="brand-mark" aria-hidden="true">g.</span><span><span class="brand-name">G-Scores</span><span class="brand-caption" style="display:block">EXAM INSIGHTS</span></span></a>
-<div><p class="eyebrow sidebar-label">Explore data</p><nav class="nav" aria-label="Main navigation" id="nav"></nav></div>
-<div class="sidebar-end"><div class="dataset-badge"><span class="eyebrow">National high school exam</span><strong>Class of 2024</strong><small><span class="live-dot" aria-hidden="true"></span>Data snapshot available</small></div><div class="sidebar-foot">A clearer view of over<br>one million exam results.</div></div>
-</aside>
-<div class="shell">
-<header class="topbar"><div class="breadcrumb"><span>G-Scores</span><span aria-hidden="true">/</span><strong id="crumb">Dashboard</strong></div><div class="year"><span class="edition">National high school exam</span><label for="year">Exam year</label><select id="year" disabled aria-describedby="year-help"><option>2024</option></select><span id="year-help" class="sr-only">Only 2024 data is available.</span></div></header>
-<main id="main" tabindex="-1"></main>
-<footer class="footer"><span class="source-name">Source: diem_thi_thpt_2024.csv · <span id="dataset-count">1,061,605</span> candidates</span><span>G-Scores · Exam data insights · 2024</span></footer>
-<div class="review-bar" aria-label="Design review tools"><span><strong>INTERACTIVE PROTOTYPE</strong> · Aggregated from the 2024 CSV · API not connected.</span><label for="review-state">Preview state<select id="review-state"><option value="ready">Data available</option><option value="loading">Loading</option><option value="empty">No data</option><option value="error">Connection error</option></select></label></div>
-</div>
-<div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
-<script id="snapshot" type="application/json">{"year":2024,"total":1061605,"source":"diem_thi_thpt_2024.csv","subjects":[{"key":"toan","name":"Mathematics","short":"Math","valid":1045613,"mean":6.447309281732342,"median":6.8,"std":1.5568994428742597,"min":0.0,"max":9.8,"missing":15992,"zero":1,"ten":0,"bins":[2,17,447,1775,9189,12985,30439,27877,54033,46151,86492,71978,130309,100898,162622,112007,142762,43932,11434,264],"bands":[82731,258654,505836,198392]},{"key":"ngu_van","name":"Literature","short":"Literature","valid":1050101,"mean":7.231146118325761,"median":7.5,"std":1.3300567026461665,"min":0.0,"max":10.0,"missing":11504,"zero":20,"ten":2,"bins":[30,22,194,691,1416,2691,4800,8206,14592,20552,44069,61843,92267,120554,143984,156311,156463,129363,76011,16042],"bands":[18050,141056,513116,377879]},{"key":"ngoai_ngu","name":"Foreign Language","short":"Foreign lang.","valid":912705,"mean":5.521937975578089,"median":5.2,"std":1.8806564199555327,"min":0.0,"max":10.0,"missing":148900,"zero":3,"ten":645,"bins":[4,39,1102,4274,22171,31178,73268,64002,112961,78937,109453,62181,77572,43638,59513,38929,58384,34894,32284,7921],"bands":[196038,363532,219652,133483]},{"key":"vat_li","name":"Physics","short":"Physics","valid":345615,"mean":6.666866310779335,"median":7.0,"std":1.6311267478100906,"min":0.0,"max":10.0,"missing":715990,"zero":4,"ten":55,"bins":[5,13,88,508,1605,3781,6975,10581,14693,18239,21579,24761,28215,33063,40127,47236,47329,31964,12661,2192],"bands":[23556,79272,148641,94146]},{"key":"hoa_hoc","name":"Chemistry","short":"Chemistry","valid":346518,"mean":6.6808297115878545,"median":6.75,"std":1.641467960059908,"min":0.0,"max":10.0,"missing":715087,"zero":11,"ten":1278,"bins":[13,0,25,217,883,2612,5713,10316,15083,20113,24828,28423,31448,34922,38128,40461,38014,29045,17401,8873],"bands":[19779,88447,144959,93333]},{"key":"sinh_hoc","name":"Biology","short":"Biology","valid":342378,"mean":6.2840785622908015,"median":6.25,"std":1.244847188448677,"min":0.0,"max":10.0,"missing":719227,"zero":35,"ten":34,"bins":[35,3,26,113,355,954,2387,5755,13035,23205,34835,45188,51139,51305,45318,34287,21255,9558,2975,650],"bands":[9628,116263,182049,34438]},{"key":"lich_su","name":"History","short":"History","valid":706214,"mean":6.570343054654821,"median":6.5,"std":1.4628031741930663,"min":0.0,"max":10.0,"missing":355391,"zero":6,"ten":2108,"bins":[6,6,40,194,862,2623,6758,14223,26042,41352,58632,74366,86634,92329,88535,75079,57940,39708,25213,15672],"bands":[24712,200392,342577,138533]},{"key":"dia_li","name":"Geography","short":"Geography","valid":704682,"mean":7.193541200144178,"median":7.25,"std":1.2839436616415967,"min":0.0,"max":10.0,"missing":356923,"zero":59,"ten":3175,"bins":[61,3,37,127,390,961,2089,4186,7862,15031,27020,46313,71168,95171,108944,106804,89066,64629,41377,23443],"bands":[7854,96226,382087,218515]},{"key":"gdcd","name":"Civic Education","short":"Civics","valid":583609,"mean":8.156503326713604,"median":8.25,"std":1.0426434154850313,"min":0.0,"max":10.0,"missing":477996,"zero":23,"ten":3661,"bins":[23,0,6,31,74,124,266,537,1156,2302,4512,8916,17190,31471,52869,79910,106577,119226,104935,53484],"bands":[1061,16886,181440,384222]}],"combinations":[{"key":"A00","subjects":[0,3,4],"english":false,"valid":343800,"mean":20.904633362420014,"median":21.3,"std":3.3803486679462202,"min":2.15,"max":29.6,"bins":[0,0,2,1,2,5,24,68,191,395,896,1713,3083,5199,7899,11316,15321,20113,25658,31606,36412,39927,40394,38213,31196,20244,9788,3442,668,24],"top":[{"sbd":"26020938","scores":[9.6,10.0,10.0],"total":29.6},{"sbd":"26009943","scores":[9.8,9.75,10.0],"total":29.55},{"sbd":"19016615","scores":[9.6,9.75,10.0],"total":29.35},{"sbd":"19013166","scores":[9.8,9.75,9.75],"total":29.3},{"sbd":"26014736","scores":[9.8,9.5,10.0],"total":29.3},{"sbd":"55006046","scores":[9.8,9.5,10.0],"total":29.3},{"sbd":"19002020","scores":[9.2,10.0,10.0],"total":29.2},{"sbd":"28035804","scores":[9.2,10.0,10.0],"total":29.2},{"sbd":"32005631","scores":[9.2,10.0,10.0],"total":29.2},{"sbd":"01095066","scores":[9.4,9.75,10.0],"total":29.15}]},{"key":"A01","subjects":[0,3,2],"english":true,"valid":328850,"mean":20.472350007602248,"median":20.75,"std":3.3508576813392588,"min":5.2,"max":29.6,"bins":[0,0,0,0,0,1,19,64,149,376,928,1732,3375,5737,8862,12787,17323,22505,28427,33842,37491,38281,35345,30714,24719,16496,7535,1940,192,10],"top":[{"sbd":"02038432","scores":[9.8,10.0,9.8],"total":29.6},{"sbd":"01015453","scores":[9.6,10.0,9.8],"total":29.4},{"sbd":"37006720","scores":[9.6,10.0,9.8],"total":29.4},{"sbd":"26020938","scores":[9.6,10.0,9.6],"total":29.2},{"sbd":"02025243","scores":[9.4,9.75,10.0],"total":29.15},{"sbd":"40002472","scores":[9.8,9.75,9.6],"total":29.15},{"sbd":"02038225","scores":[9.8,9.5,9.8],"total":29.1},{"sbd":"02037687","scores":[9.2,10.0,9.8],"total":29.0},{"sbd":"02038016","scores":[9.6,10.0,9.4],"total":29.0},{"sbd":"12008454","scores":[9.6,10.0,9.4],"total":29.0}]},{"key":"B00","subjects":[0,4,5],"english":false,"valid":342291,"mean":20.531107449509335,"median":20.75,"std":2.981831230545571,"min":3.2,"max":29.55,"bins":[0,0,0,1,0,3,3,15,58,136,287,766,1751,3554,6845,11635,17950,25123,32257,38704,42910,44385,41175,33635,22366,11822,4948,1595,351,16],"top":[{"sbd":"03015805","scores":[9.8,10.0,9.75],"total":29.55},{"sbd":"15000286","scores":[9.4,10.0,10.0],"total":29.4},{"sbd":"29003629","scores":[9.4,10.0,10.0],"total":29.4},{"sbd":"44002862","scores":[9.4,10.0,10.0],"total":29.4},{"sbd":"02038228","scores":[9.6,10.0,9.75],"total":29.35},{"sbd":"56010544","scores":[9.6,10.0,9.75],"total":29.35},{"sbd":"55006046","scores":[9.8,10.0,9.5],"total":29.3},{"sbd":"40019455","scores":[9.2,10.0,10.0],"total":29.2},{"sbd":"29015912","scores":[9.4,10.0,9.75],"total":29.15},{"sbd":"38006535","scores":[9.4,10.0,9.75],"total":29.15}]},{"key":"C00","subjects":[1,6,7],"english":false,"valid":704008,"mean":20.952816956625494,"median":21.25,"std":3.465670903566354,"min":0.0,"max":29.75,"bins":[1,2,1,2,9,22,87,218,476,919,1702,3098,5273,8551,13644,21319,31079,43156,55717,67976,77552,81156,78152,69242,54727,39939,26645,15723,6664,956],"top":[{"sbd":"19000335","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19000407","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19000454","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19000475","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19000493","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19007470","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19007655","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19011935","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19015589","scores":[9.75,10.0,10.0],"total":29.75},{"sbd":"19016184","scores":[9.75,10.0,10.0],"total":29.75}]},{"key":"D01","subjects":[0,1,2],"english":true,"valid":902723,"mean":19.49392803772586,"median":19.6,"std":3.6232301057295597,"min":3.85,"max":28.75,"bins":[0,0,0,1,5,40,164,492,1360,2901,5918,10437,17587,27001,37967,51125,65622,79417,90029,94313,93111,84302,73631,62311,50833,34657,16135,3238,126,0],"top":[{"sbd":"16000274","scores":[9.0,9.75,10.0],"total":28.75},{"sbd":"03007888","scores":[9.4,9.5,9.8],"total":28.7},{"sbd":"19000204","scores":[9.4,9.5,9.8],"total":28.7},{"sbd":"19000448","scores":[9.2,9.5,10.0],"total":28.7},{"sbd":"21000291","scores":[9.2,9.5,10.0],"total":28.7},{"sbd":"50013600","scores":[9.4,9.5,9.8],"total":28.7},{"sbd":"19000206","scores":[9.2,9.75,9.6],"total":28.55},{"sbd":"19000443","scores":[8.8,9.75,10.0],"total":28.55},{"sbd":"19008594","scores":[9.0,9.75,9.8],"total":28.55},{"sbd":"25000073","scores":[9.0,9.75,9.8],"total":28.55}]},{"key":"D07","subjects":[0,4,2],"english":true,"valid":327525,"mean":20.45103808869552,"median":20.7,"std":3.1120439353113696,"min":5.75,"max":29.4,"bins":[0,0,0,0,0,1,14,36,98,290,603,1339,2510,4502,7421,11499,16573,23075,29963,36577,41696,42334,38160,30204,20864,12186,5711,1640,217,12],"top":[{"sbd":"55006046","scores":[9.8,10.0,9.6],"total":29.4},{"sbd":"02037987","scores":[9.4,10.0,9.8],"total":29.2},{"sbd":"03007888","scores":[9.4,10.0,9.8],"total":29.2},{"sbd":"25017518","scores":[9.2,10.0,10.0],"total":29.2},{"sbd":"26015455","scores":[9.6,10.0,9.6],"total":29.2},{"sbd":"26020938","scores":[9.6,10.0,9.6],"total":29.2},{"sbd":"27008119","scores":[9.4,10.0,9.8],"total":29.2},{"sbd":"33001732","scores":[9.2,10.0,10.0],"total":29.2},{"sbd":"02023084","scores":[9.8,9.5,9.8],"total":29.1},{"sbd":"01041488","scores":[9.2,10.0,9.8],"total":29.0}]}],"samples":{"01000001":{"sbd":"01000001","scores":[840,675,800,600,525,500,null,null,null],"language":"N1"},"01000002":{"sbd":"01000002","scores":[860,850,720,null,null,null,725,600,800],"language":"N1"},"01003254":{"sbd":"01003254","scores":[820,0,null,875,875,0,null,null,null],"language":null},"26020938":{"sbd":"26020938","scores":[960,800,960,1000,1000,875,null,null,null],"language":"N1"},"26009943":{"sbd":"26009943","scores":[980,875,740,975,1000,850,null,null,null],"language":"N1"},"19016615":{"sbd":"19016615","scores":[960,825,760,975,1000,800,null,null,null],"language":"N1"},"19013166":{"sbd":"19013166","scores":[980,850,620,975,975,675,null,null,null],"language":"N1"},"26014736":{"sbd":"26014736","scores":[980,825,800,950,1000,775,null,null,null],"language":"N1"},"55006046":{"sbd":"55006046","scores":[980,700,960,950,1000,950,null,null,null],"language":"N1"},"19002020":{"sbd":"19002020","scores":[920,850,760,1000,1000,750,null,null,null],"language":"N1"},"28035804":{"sbd":"28035804","scores":[920,850,700,1000,1000,925,null,null,null],"language":"N1"},"32005631":{"sbd":"32005631","scores":[920,775,820,1000,1000,900,null,null,null],"language":"N1"},"01095066":{"sbd":"01095066","scores":[940,825,720,975,1000,725,null,null,null],"language":"N1"},"02038432":{"sbd":"02038432","scores":[980,825,980,1000,775,825,null,null,null],"language":"N1"},"01015453":{"sbd":"01015453","scores":[960,825,980,1000,750,775,null,null,null],"language":"N1"},"37006720":{"sbd":"37006720","scores":[960,625,980,1000,800,750,null,null,null],"language":"N1"},"02025243":{"sbd":"02025243","scores":[940,725,1000,975,925,825,null,null,null],"language":"N1"},"40002472":{"sbd":"40002472","scores":[980,null,960,975,null,null,null,null,null],"language":"N1"},"02038225":{"sbd":"02038225","scores":[980,725,980,950,800,825,null,null,null],"language":"N1"},"02037687":{"sbd":"02037687","scores":[920,625,980,1000,850,850,null,null,null],"language":"N1"},"02038016":{"sbd":"02038016","scores":[960,775,940,1000,850,875,null,null,null],"language":"N1"},"12008454":{"sbd":"12008454","scores":[960,850,940,1000,850,725,null,null,null],"language":"N1"},"03015805":{"sbd":"03015805","scores":[980,800,null,850,1000,975,null,null,null],"language":null},"15000286":{"sbd":"15000286","scores":[940,725,920,650,1000,1000,null,null,null],"language":"N1"},"29003629":{"sbd":"29003629","scores":[940,850,620,700,1000,1000,null,null,null],"language":"N1"},"44002862":{"sbd":"44002862","scores":[940,750,860,850,1000,1000,null,null,null],"language":"N1"},"02038228":{"sbd":"02038228","scores":[960,625,900,725,1000,975,null,null,null],"language":"N1"},"56010544":{"sbd":"56010544","scores":[960,875,null,825,1000,975,null,null,null],"language":null},"40019455":{"sbd":"40019455","scores":[920,850,null,800,1000,1000,null,null,null],"language":null},"29015912":{"sbd":"29015912","scores":[940,750,780,700,1000,975,null,null,null],"language":"N1"},"38006535":{"sbd":"38006535","scores":[940,725,880,675,1000,975,null,null,null],"language":"N1"},"19000335":{"sbd":"19000335","scores":[660,975,960,null,null,null,1000,1000,900],"language":"N1"},"19000407":{"sbd":"19000407","scores":[660,975,720,null,null,null,1000,1000,950],"language":"N1"},"19000454":{"sbd":"19000454","scores":[640,975,880,null,null,null,1000,1000,950],"language":"N1"},"19000475":{"sbd":"19000475","scores":[740,975,960,null,null,null,1000,1000,1000],"language":"N1"},"19000493":{"sbd":"19000493","scores":[820,975,780,null,null,null,1000,1000,950],"language":"N1"},"19007470":{"sbd":"19007470","scores":[820,975,580,null,null,null,1000,1000,950],"language":"N1"},"19007655":{"sbd":"19007655","scores":[680,975,440,null,null,null,1000,1000,950],"language":"N1"},"19011935":{"sbd":"19011935","scores":[780,975,560,null,null,null,1000,1000,950],"language":"N1"},"19015589":{"sbd":"19015589","scores":[820,975,620,null,null,null,1000,1000,925],"language":"N1"},"19016184":{"sbd":"19016184","scores":[840,975,880,null,null,null,1000,1000,950],"language":"N1"},"16000274":{"sbd":"16000274","scores":[900,975,1000,null,null,null,900,975,950],"language":"N1"},"03007888":{"sbd":"03007888","scores":[940,950,980,850,1000,775,null,null,null],"language":"N1"},"19000204":{"sbd":"19000204","scores":[940,950,980,null,null,null,850,800,850],"language":"N1"},"19000448":{"sbd":"19000448","scores":[920,950,1000,425,950,875,null,null,null],"language":"N1"},"21000291":{"sbd":"21000291","scores":[920,950,1000,null,null,null,950,925,1000],"language":"N1"},"50013600":{"sbd":"50013600","scores":[940,950,980,775,800,750,null,null,null],"language":"N1"},"19000206":{"sbd":"19000206","scores":[920,975,960,625,1000,800,null,null,null],"language":"N1"},"19000443":{"sbd":"19000443","scores":[880,975,1000,null,null,null,725,800,850],"language":"N1"},"19008594":{"sbd":"19008594","scores":[900,975,980,null,null,null,800,825,925],"language":"N1"},"25000073":{"sbd":"25000073","scores":[900,975,980,null,null,null,850,875,950],"language":"N1"},"02037987":{"sbd":"02037987","scores":[940,825,980,825,1000,925,null,null,null],"language":"N1"},"25017518":{"sbd":"25017518","scores":[920,800,1000,975,1000,950,null,null,null],"language":"N1"},"26015455":{"sbd":"26015455","scores":[960,775,960,900,1000,875,null,null,null],"language":"N1"},"27008119":{"sbd":"27008119","scores":[940,900,980,925,1000,850,null,null,null],"language":"N1"},"33001732":{"sbd":"33001732","scores":[920,900,1000,825,1000,925,null,null,null],"language":"N1"},"02023084":{"sbd":"02023084","scores":[980,825,980,825,950,850,null,null,null],"language":"N1"},"01041488":{"sbd":"01041488","scores":[920,750,980,950,1000,725,null,null,null],"language":"N1"}}}</script>
-<script>
-'use strict';
-const DATA = JSON.parse(document.getElementById('snapshot').textContent);
-const main = document.getElementById('main');
-const int = n => n == null ? 'No data' : new Intl.NumberFormat('en-US').format(n);
-const dec = n => n == null ? 'No data' : new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
-const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const paths = {grid:'<rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect>',search:'<circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m16 16 5 5"></path>',chart:'<path d="M4 3v17h17M8 16v-5m5 5V6m5 10v-8"></path>',trophy:'<path d="M8 3h8v5a4 4 0 0 1-8 0V3Zm0 2H4v2a4 4 0 0 0 4 4m8-6h4v2a4 4 0 0 1-4 4m-4 1v6m-4 3h8m-7-3h6"></path>',arrow:'<path d="M4 12h15m-6-6 6 6-6 6"></path>',users:'<circle cx="9" cy="7" r="3"></circle><path d="M3 21v-3a6 6 0 0 1 12 0v3m1-17a3 3 0 0 1 0 6m3 11v-3a6 6 0 0 0-3-5"></path>',book:'<path d="M12 6a10 10 0 0 0-9-2v15a10 10 0 0 1 9 2m0-15a10 10 0 0 1 9-2v15a10 10 0 0 0-9 2V6Z"></path>',info:'<circle cx="12" cy="12" r="9"></circle><path d="M12 11v6m0-10v.1"></path>',retry:'<path d="M3 11a9 9 0 1 1 2 7M3 4v7h7"></path>',empty:'<path d="M4 5h16v15H4zM8 2v6m8-6v6M8 12h8m-8 4h4"></path>',alert:'<path d="m12 3 10 18H2L12 3Zm0 6v5m0 3v.1"></path>'};
-const icon = name => `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name]||paths.chart}</svg>`;
-const routes = {'/':['Dashboard','grid'],'/scores':['Score lookup','search'],'/reports':['Subject reports','chart'],'/rankings':['Rankings','trophy']};
-let subjectKey='toan',groupKey='A00',review='ready',lookupTimer=null;
-const subject=()=>DATA.subjects.find(s=>s.key===subjectKey)||DATA.subjects[0];
-const group=()=>DATA.combinations.find(g=>g.key===groupKey)||DATA.combinations[0];
-const subjectOptions=()=>DATA.subjects.map(s=>`<option value="${s.key}" ${s.key===subjectKey?'selected':''}>${s.name}</option>`).join('');
-const groupOptions=()=>DATA.combinations.map(g=>`<option value="${g.key}" ${g.key===groupKey?'selected':''}>${g.key}</option>`).join('');
-const groupNames=g=>g.subjects.map(i=>g.english&&i===2?'English':DATA.subjects[i].short).join(' + ');
-function heading(title,description,eyebrow='National high school exam · 2024',action=''){return `<div class="page-heading"><div class="heading-copy"><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p class="description">${description}</p></div>${action}</div>`;}
-function metric(label,value,note,kind='chart'){return `<article class="metric"><div class="metric-label"><span>${label}</span>${icon(kind)}</div><strong class="metric-value">${value}</strong><div class="metric-note">${note}</div></article>`;}
-const bandLabels=['Below 4','4 to below 6','6 to below 8','8 to 10'];
-const bandRules=['[0; 4)','[4; 6)','[6; 8)','[8; 10]'];
-const bandColors=['var(--low)','var(--middle)','var(--good)','var(--high)'];
-function legend(){return `<div class="legend">${bandLabels.map((l,i)=>`<span><i class="swatch" style="background:${bandColors[i]}"></i>${l}</span>`).join('')}</div>`;}
-function bandChart(){return `<section class="panel" aria-labelledby="bands-title"><div class="panel-header"><div class="section-top" style="width:100%"><div><h2 id="bands-title">Score bands by subject</h2><p class="sub">Candidate share across 4 score bands · 9 subjects · 2024</p></div>${legend()}</div></div><div class="band-chart" role="img" aria-label="100 percent stacked bars by subject. A table of counts and percentages follows.">${DATA.subjects.map(s=>`<div class="band-row"><span class="band-label">${s.short}</span><div class="band-track">${s.bands.map((n,i)=>`<div class="band-segment" style="width:${n/s.valid*100}%;background:${bandColors[i]}" title="${s.name} · ${bandLabels[i]}: ${int(n)} (${dec(n/s.valid*100)}%)"></div>`).join('')}</div><span class="band-total">${int(s.valid)}</span></div>`).join('')}<div class="band-axis"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div></div><details class="chart-details"><summary>View counts and percentages</summary><div class="table-wrap"><table class="data-table"><caption class="sr-only">Candidate counts and percentages across 4 score bands, 2024</caption><thead><tr><th scope="col">Subject</th>${bandLabels.map(l=>`<th scope="col" class="num">${l}</th>`).join('')}<th scope="col" class="num">Valid scores</th></tr></thead><tbody>${DATA.subjects.map(s=>`<tr><th scope="row">${s.name}</th>${s.bands.map(n=>`<td class="num">${int(n)} · ${dec(n/s.valid*100)}%</td>`).join('')}<td class="num">${int(s.valid)}</td></tr>`).join('')}</tbody></table></div></details><div class="chart-foot"><span>Score bands: ${bandRules.join(' · ')}.</span><span>Percentages use valid scores in each subject. These are not graduation pass rates.</span></div></section>`;}
-function histogram(bins,max,id){
- const peak=Math.max(...bins),scale=Math.ceil(peak/10000)*10000||1,step=max/bins.length,peakIndex=bins.indexOf(peak);
- const label=i=>`[${dec(i*step)}; ${dec((i+1)*step)}${i===bins.length-1?']':')'}`;
- const description=i=>`${label(i)} points: ${int(bins[i])} candidates · ${dec(bins[i]/bins.reduce((a,b)=>a+b,0)*100)}%`;
- return `<div class="chart-body"><p class="chart-caption">Candidates</p><div class="hist"><div class="y-axis" aria-hidden="true">${[1,.75,.5,.25,0].map(k=>`<span>${int(scale*k)}</span>`).join('')}</div><div class="plot" aria-label="Score distribution. Use Tab to inspect each interval.">${bins.map((n,i)=>`<div role="img" class="bin ${i===peakIndex?'peak':''}" tabindex="0" data-chart="${id}" data-hint="${esc(description(i))}" aria-label="${esc(description(i))}"><div class="bar" style="height:${n/scale*100}%"></div></div>`).join('')}</div></div><div class="x-axis" aria-hidden="true">${[0,.2,.4,.6,.8,1].map(n=>`<span>${n*max}</span>`).join('')}</div><p class="chart-caption" style="text-align:right">${max===10?'Subject score':'Combination total'} →</p><p id="${id}-hint" class="hist-hint" aria-live="polite"><strong>Most common interval:</strong> ${description(peakIndex)}</p></div><details class="chart-details"><summary>View all ${bins.length} score intervals</summary><div class="table-wrap"><table class="data-table"><caption class="sr-only">Score distribution for ${max===10?subject().name:group().key}, 2024</caption><thead><tr><th scope="col">Score interval</th><th scope="col" class="num">Candidates</th><th scope="col" class="num">Share</th></tr></thead><tbody>${bins.map((n,i)=>`<tr><th scope="row">${label(i)}</th><td class="num">${int(n)}</td><td class="num">${dec(n/bins.reduce((a,b)=>a+b,0)*100)}%</td></tr>`).join('')}</tbody></table></div></details>`;
-}
-function distribution(withFilter=true){const s=subject();return `<div class="split"><section class="panel" aria-labelledby="subject-hist-title"><div class="panel-header"><div><h2 id="subject-hist-title">${s.name} score distribution · 2024</h2><p class="sub">${int(s.valid)} valid scores · 20 intervals of 0.5 points</p></div>${withFilter?`<label class="select-label"><span class="sr-only">Choose a subject</span><select class="filter" id="subject-filter">${subjectOptions()}</select></label>`:''}</div>${histogram(s.bins,10,'subject-chart')}<div class="chart-foot"><span>Score range 0–10 · Candidate counts start at zero.</span><span>The final interval [9.5; 10] includes 10.</span></div></section><aside class="panel" aria-labelledby="summary-title"><div class="panel-header"><div><h2 id="summary-title">${s.name} at a glance</h2><p class="sub">Same population as the chart</p></div></div><dl class="stat-list">${[['Mean score',dec(s.mean)],['Median',dec(s.median)],['Standard deviation',dec(s.std)],['Valid scores',int(s.valid)],['Scores of 0',int(s.zero)],['Scores of 10',int(s.ten)]].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl><p class="callout">${s.key==='ngoai_ngu'?'Includes <strong>all foreign-language codes</strong>, not only English.':`Highest score: <strong>${dec(s.max)}</strong>. Excludes ${int(s.missing)} candidates with missing scores in this subject.`}</p></aside></div>`;}
-function overviewTable(){return `<section class="panel"><div class="table-title"><div><h2>All 9 subjects at a glance</h2><p class="small muted" style="margin-top:5px">Missing scores are listed separately and never counted as zero.</p></div></div><div class="table-wrap"><table class="data-table"><caption class="sr-only">Statistics for all 9 subjects in 2024</caption><thead><tr><th scope="col">Subject</th><th scope="col" class="num">Valid scores</th><th scope="col" class="num">Missing scores</th><th scope="col" class="num">Mean</th><th scope="col" class="num">Lowest</th><th scope="col" class="num">Highest</th></tr></thead><tbody>${DATA.subjects.map(s=>`<tr><th scope="row" style="font-weight:500;background:transparent;text-transform:none;letter-spacing:0;font-size:12px"><a class="subject-cell" href="#/reports?subject=${s.key}"><span class="subject-mark" aria-hidden="true">${s.short.slice(0,1)}</span>${s.name}</a></th><td class="num">${int(s.valid)}</td><td class="num muted">${int(s.missing)}</td><td class="num"><strong>${dec(s.mean)}</strong></td><td class="num">${dec(s.min)}</td><td class="num">${dec(s.max)}</td></tr>`).join('')}</tbody></table></div></section>`;}
-function rankingTable(g,limit=10){return `<div class="table-wrap"><table class="data-table"><caption class="sr-only">Top ${limit} candidates for ${g.key}, 2024</caption><thead><tr><th scope="col">Position</th><th scope="col">Registration number</th>${g.subjects.map(i=>`<th scope="col" class="num">${g.english&&i===2?'English':DATA.subjects[i].short}</th>`).join('')}<th scope="col" class="num">Total score</th></tr></thead><tbody>${g.top.slice(0,limit).map((r,i)=>`<tr><td><span class="rank rank-${i+1}">${i+1}</span></td><td><a class="mono" href="#/scores?sbd=${r.sbd}" aria-label="Look up registration number ${r.sbd}">${r.sbd}</a></td>${r.scores.map(v=>`<td class="num">${dec(v)}</td>`).join('')}<td class="num total-score">${dec(r.total)}</td></tr>`).join('')}</tbody></table></div>`;}
-function combinationChart(){const g=group();return `<section class="panel"><div class="panel-header"><div><h2>${g.key} total-score distribution · 2024</h2><p class="sub">${groupNames(g)} · ${int(g.valid)} candidates with all 3 scores</p></div></div>${histogram(g.bins,30,'combination-chart')}<div class="chart-foot"><span>30 intervals of 1 point · Unweighted total.</span><span>The final interval [29; 30] includes 30.</span></div></section>`;}
-function dashboard(){const s=subject(),g=group();return heading('Every score tells a story.','Explore the 2024 exam, from the big picture to individual results.', 'G-Scores / Dashboard',`<a class="btn" href="#/scores">${icon('search')}Look up exam scores</a>`)+`<div class="metrics">${metric('Total candidates',int(DATA.total),'Unique registration numbers','users')}${metric('Subjects available','09','All 9 subjects in the dataset','book')}${metric(`${s.short} scores`,int(s.valid),`${dec(s.valid/DATA.total*100)}% of all candidates`)}${metric(`${s.short} mean`,dec(s.mean),'On a 10-point scale')}</div>`+distribution()+bandChart()+`<section class="panel"><div class="table-title"><div><h2>Leading scores</h2><p class="small muted" style="margin-top:5px">${g.key} · ${groupNames(g)}</p></div><label class="select-label">Combination<select class="filter" id="group-filter">${groupOptions()}</select></label></div><div class="rank-preview"><div>${rankingTable(g,3)}<div style="padding:18px 24px"><a class="inline-link" href="#/rankings?group=${g.key}">View full top 10 ${icon('arrow')}</a></div></div><div class="preview-side"><div class="mini-stat"><span class="metric-note">Eligible candidates</span><strong class="metric-value">${int(g.valid)}</strong></div><div class="mini-stat"><span class="metric-note">Mean total / 30</span><strong class="metric-value">${dec(g.mean)}</strong></div><div class="mini-stat"><span class="metric-note">Highest total / 30</span><strong class="metric-value">${dec(g.max)}</strong></div></div></div></section>`+combinationChart()+overviewTable()+`<p class="notice">${icon('info')} Combinations require all 3 scores. A01, D01 and D07 require English (N1). Candidates may qualify for several combinations; do not add these counts to find the total number of candidates.</p>`;}
-function reports(){const s=subject();return heading('A closer look at every subject.','Explore score distributions and compare score bands across 9 subjects.', 'G-Scores / Subject reports')+`<div class="metrics">${metric(`${s.short} scores`,int(s.valid),'Candidates with a valid score only','users')}${metric('Mean score',dec(s.mean),s.name)}${metric('Median',dec(s.median),'Middle value of the score population')}${metric('Standard deviation',dec(s.std),'Population standard deviation')}</div>`+distribution()+bandChart()+overviewTable();}
-function rankings(){const g=group();return heading('Meet the highest scores.','Total-score distributions and the top 10 candidates in each combination.', 'G-Scores / Rankings')+`<div class="group-tabs" role="group" aria-label="Choose an exam combination">${DATA.combinations.map(c=>`<button class="group-tab" id="tab-${c.key}" data-group="${c.key}" aria-pressed="${c.key===g.key}"><strong>${c.key}</strong><span>${groupNames(c)}</span></button>`).join('')}</div><div class="metrics">${metric('All 3 scores available',int(g.valid),`Combination ${g.key}`,'users')}${metric('Mean total score',dec(g.mean),'Unweighted total / 30')}${metric('Highest total score',dec(g.max),'Excludes priority points','trophy')}${metric('Maximum possible','30.00',groupNames(g),'book')}</div><div class="group-rule">${icon('info')}<div><strong>${g.key} = ${groupNames(g)}.</strong> Only candidates with all 3 scores are included.${g.english?' English is required (language code N1).':''} Zero is valid; missing scores are never replaced with zero.</div></div>`+combinationChart()+`<section class="panel"><div class="table-title"><div><h2>Top 10 candidates · ${g.key}</h2><p class="small muted" style="margin-top:5px">2024 · Select a registration number to view all subject scores.</p></div><span class="edition">Total score / 30</span></div>${rankingTable(g)}<p class="table-note">Ordered by total score, highest first. Tied totals use ascending registration numbers for display. This is a dataset leaderboard, not an admission result.</p></section>`;}
-function emptyResult(){return `<div class="result-empty"><div class="empty-icon">${icon('search')}</div><h2>Your exam scores, right here.</h2><p>Enter your registration number to view your 2024 national high school exam scores.</p><span class="small muted">Keep any leading zeros in your registration number.</span></div>`;}
-function scoresPage(){const samples=['01000001','01000002',Object.values(DATA.samples).find(c=>c.scores.some(s=>s===0)).sbd];return heading('Look up exam scores.','One registration number. Every subject score.','G-Scores / Score lookup')+`<div class="lookup-layout"><section class="panel"><form id="lookup-form" class="lookup-form" novalidate><h2>Find your results</h2><p class="helper">Enter the exact 8-digit number on your exam registration slip.</p><div class="field"><label for="sbd">Registration number</label><input id="sbd" name="sbd" type="text" inputmode="numeric" pattern="[0-9]{8}" autocomplete="off" placeholder="Example: 01000001" aria-describedby="sbd-help sbd-error" aria-invalid="false"><span class="helper" id="sbd-help">Exactly 8 digits, including any leading zeros.</span><span id="sbd-error" class="field-error" role="alert"></span></div><button class="btn btn-primary" id="lookup-submit" type="submit">${icon('search')}Score lookup</button><div class="sample-area"><p class="helper" style="margin-bottom:9px">Try a sample registration number</p><div class="samples">${samples.map(s=>`<button class="sample-btn mono" type="button" data-sample="${s}">${s}</button>`).join('')}</div></div></form><div class="lookup-note"><strong>Reading your results</strong><br>A score of 0 is valid.<br>Missing scores appear as “Not taken / unavailable”.<br><br>This prototype supports the samples above and registration numbers in the top 10. Other numbers show the sample not-found state.</div></section><section class="panel" id="lookup-result" aria-label="Lookup results" aria-busy="false">${emptyResult()}</section></div>`;}
-function resultMarkup(candidate){return `<div class="result-head"><div><span class="eyebrow muted">Exam results · 2024</span><h2 class="mono" tabindex="-1" id="result-sbd">${candidate.sbd}</h2></div><span class="status-label">Results found</span></div><div class="score-grid">${DATA.subjects.map((s,i)=>`<div class="subject-score"><h3>${s.name}${i===2&&candidate.language?` · ${candidate.language==='N1'?'English (N1)':esc(candidate.language)}`:''}</h3>${candidate.scores[i]==null?'<strong class="missing">Not taken /<br>unavailable</strong>':`<strong>${dec(candidate.scores[i]/100)} <span class="point-scale">/ 10</span></strong>`}</div>`).join('')}</div>${[0,3,4].every(i=>candidate.scores[i]!=null)?`<div class="result-group"><span>Total score A00<br><span class="small muted">Math + Physics + Chemistry</span></span><strong>${dec([0,3,4].reduce((n,i)=>n+candidate.scores[i],0)/100)} <span class="small muted">/ 30</span></strong></div>`:''}<p class="results-note">Missing scores are never replaced with zero. Combination totals are unweighted and exclude priority points.</p>`;}
-function loadingMarkup(){return `<div class="skeleton-layout" role="status"><p class="loading-message">Loading exam data…</p><div class="skeleton-row" aria-hidden="true">${Array(4).fill('<div class="skeleton"></div>').join('')}</div><div class="skeleton-chart" aria-hidden="true"></div></div>`;}
-function stateMarkup(state){if(state==='loading')return `<section class="panel page-state" aria-busy="true">${loadingMarkup()}</section>`;const isError=state==='error';return `<section class="panel result-empty page-state"><div class="empty-icon ${isError?'error-icon':''}">${icon(isError?'alert':'empty')}</div><h2>${isError?'Unable to load data.':'No data for 2024 yet.'}</h2><p>${isError?'The data connection is unavailable. Retry to continue.':'Exam data is not ready yet. Statistics and rankings will appear when the dataset is available.'}</p><button class="btn ${isError?'btn-primary':''}" id="retry">${icon(isError?'retry':'arrow')}${isError?'Retry':'View sample data'}</button></section>`;}
-function announce(message){document.getElementById('announcer').textContent=message;}
-function lookup(value){const input=document.getElementById('sbd'),error=document.getElementById('sbd-error');value=value.trim();input.value=value;clearTimeout(lookupTimer);if(!/^[0-9]{8}$/.test(value)){input.setAttribute('aria-invalid','true');error.textContent='Enter exactly 8 digits. Example: 01000001.';input.focus();return;}input.setAttribute('aria-invalid','false');error.textContent='';const result=document.getElementById('lookup-result'),submit=document.getElementById('lookup-submit');result.innerHTML=loadingMarkup();result.setAttribute('aria-busy','true');submit.disabled=true;announce('Looking up registration number '+value);lookupTimer=setTimeout(()=>{const candidate=DATA.samples[value];result.setAttribute('aria-busy','false');submit.disabled=false;if(candidate){result.innerHTML=resultMarkup(candidate);document.getElementById('result-sbd').focus({preventScroll:true});announce('Results found for registration number '+value);}else{result.innerHTML=`<div class="result-empty"><div class="empty-icon">${icon('search')}</div><h2 tabindex="-1" id="not-found">Registration number not found.</h2><p>Registration number <strong class="mono">${esc(value)}</strong> is not in this prototype. Check the number or choose a sample.</p><button class="btn" id="edit-sbd">Edit registration number</button></div>`;document.getElementById('not-found').focus({preventScroll:true});document.getElementById('edit-sbd').onclick=()=>{input.focus();input.select();};announce('Registration number not found in the sample data.');}},450);}
-function render(focusMain=false){clearTimeout(lookupTimer);const raw=(location.hash.slice(1)||'/'),[route,query]=raw.split('?'),params=new URLSearchParams(query||'');if(params.has('subject'))subjectKey=DATA.subjects.some(s=>s.key===params.get('subject'))?params.get('subject'):'toan';if(params.has('group'))groupKey=DATA.combinations.some(g=>g.key===params.get('group'))?params.get('group'):'A00';const title=routes[route]?.[0]||'Page not found';document.title='G-Scores · '+title;document.getElementById('crumb').textContent=title;document.getElementById('nav').innerHTML=Object.entries(routes).map(([path,[name,kind]])=>`<a href="#${path}" ${route===path?'aria-current="page"':''}>${icon(kind)}<span>${name}</span></a>`).join('');main.setAttribute('aria-busy',review==='loading'?'true':'false');if(!routes[route])main.innerHTML=heading('This page is not available.','Choose a page from the navigation to continue.')+`<a class="btn" href="#/">Back to dashboard</a>`;else if(review!=='ready')main.innerHTML=heading(title,'National high school exam 2024')+stateMarkup(review);else main.innerHTML=({'/':dashboard,'/scores':scoresPage,'/reports':reports,'/rankings':rankings}[route])();const sf=document.getElementById('subject-filter');if(sf)sf.onchange=()=>{subjectKey=sf.value;history.replaceState(null,'','#'+route);render();document.getElementById('subject-filter').focus();announce('Selected subject: '+subject().name);};const gf=document.getElementById('group-filter');if(gf)gf.onchange=()=>{groupKey=gf.value;history.replaceState(null,'','#'+route);render();document.getElementById('group-filter').focus();announce('Selected combination: '+groupKey);};document.querySelectorAll('[data-group]').forEach(b=>b.onclick=()=>{groupKey=b.dataset.group;history.replaceState(null,'','#/rankings');render();document.getElementById('tab-'+groupKey).focus();announce('Selected combination: '+groupKey);});document.querySelectorAll('[data-hint]').forEach(b=>{const update=()=>{document.getElementById(b.dataset.chart+'-hint').textContent=b.dataset.hint;};b.addEventListener('focus',update);b.addEventListener('pointerenter',update);});const form=document.getElementById('lookup-form');if(form){form.onsubmit=e=>{e.preventDefault();lookup(document.getElementById('sbd').value);};document.querySelectorAll('[data-sample]').forEach(b=>b.onclick=()=>lookup(b.dataset.sample));const sbd=params.get('sbd');if(sbd)lookup(sbd);}const retry=document.getElementById('retry');if(retry)retry.onclick=()=>{review='ready';document.getElementById('review-state').value='ready';render(true);announce('Sample data loaded.');};if(focusMain)main.focus({preventScroll:true});}
-document.getElementById('review-state').onchange=e=>{review=e.target.value;render();announce(e.target.selectedOptions[0].textContent);};
-document.querySelector('.skip').addEventListener('click',e=>{e.preventDefault();main.focus();main.scrollIntoView();});
-window.addEventListener('hashchange',()=>{if(location.hash==='#main'){main.focus();return;}render(true);window.scrollTo(0,0);});
-render();
-</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>G-Scores · Dashboard</title>
+    <style>
+      :root {
+        --ink: #183153;
+        --muted: #52647b;
+        --nav: #142c4b;
+        --blue: #245edb;
+        --blue-soft: #edf3ff;
+        --gold: #f0c45a;
+        --bg: #f3f6fa;
+        --surface: #fff;
+        --line: #dce4ef;
+        --low: #8a98ac;
+        --middle: #dfaa43;
+        --good: #558fbb;
+        --high: #245edb;
+        --danger: #b52c3b;
+        --danger-bg: #fff0f1;
+        --success: #19724e;
+        --radius: 14px;
+        --shadow: 0 3px 14px #18315305;
+        font-family: 'Noto Sans', Arial, sans-serif;
+        font-size: 14px;
+        color: var(--ink);
+        background: var(--bg);
+        font-synthesis: none;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button,
+      a,
+      select,
+      input {
+        touch-action: manipulation;
+      }
+
+      button,
+      a {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button,
+      select {
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+      }
+
+      a {
+        color: var(--blue);
+        text-decoration: none;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid var(--blue);
+        outline-offset: 3px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1,
+      h2,
+      h3 {
+        text-wrap: balance;
+      }
+
+      h1 {
+        font-size: 32px;
+        letter-spacing: -1px;
+        line-height: 1.3;
+        font-weight: 750;
+      }
+
+      h2 {
+        font-size: 17px;
+        letter-spacing: -0.35px;
+        line-height: 1.5;
+      }
+
+      h3 {
+        font-size: 14px;
+      }
+
+      p {
+        line-height: 1.75;
+        max-width: 68ch;
+      }
+
+      small,
+      .small {
+        font-size: 12px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .mono,
+      .metric-value,
+      td {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .mono {
+        font-family: 'Noto Sans Mono', 'DejaVu Sans Mono', monospace;
+        font-size: 0.95em;
+        letter-spacing: 0.03em;
+      }
+
+      .eyebrow {
+        font-size: 10px;
+        font-weight: 750;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+      }
+
+      .skip {
+        position: fixed;
+        z-index: 20;
+        top: -80px;
+        left: 12px;
+        padding: 12px;
+        background: var(--surface);
+      }
+
+      .skip:focus {
+        top: 8px;
+      }
+
+      .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 224px;
+        z-index: 5;
+        background: var(--nav);
+        color: #fff;
+        padding: 32px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 42px;
+      }
+
+      .brand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        color: inherit;
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: var(--gold);
+        color: var(--nav);
+        font:
+          bold 28px Georgia,
+          serif;
+        display: grid;
+        place-items: center;
+      }
+
+      .brand-name {
+        font-size: 23px;
+        font-weight: 750;
+        letter-spacing: -0.8px;
+      }
+
+      .brand-caption {
+        font-size: 10px;
+        letter-spacing: 1.6px;
+        color: #bdcce0;
+        margin-top: 3px;
+      }
+
+      .sidebar-label {
+        color: #b4c5dd;
+        margin: 0 14px 12px;
+      }
+
+      .nav {
+        display: grid;
+        gap: 8px;
+      }
+
+      .nav a {
+        color: #cbd7e7;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-height: 48px;
+        padding: 12px 14px;
+        border-radius: 9px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .nav a:hover {
+        background: #203c5e;
+      }
+
+      .nav a[aria-current='page'] {
+        color: #fff;
+        background: #294867;
+      }
+
+      .nav a[aria-current='page'] svg {
+        color: var(--gold);
+      }
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 1.7;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .sidebar-end {
+        margin-top: auto;
+        display: grid;
+        gap: 18px;
+      }
+
+      .dataset-badge {
+        border: 1px solid #3b5575;
+        border-radius: 10px;
+        padding: 16px;
+        display: grid;
+        gap: 7px;
+      }
+
+      .dataset-badge .eyebrow {
+        color: #bdcce0;
+      }
+
+      .dataset-badge strong {
+        font-size: 20px;
+      }
+
+      .live-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #8edcba;
+        margin-right: 6px;
+      }
+
+      .sidebar-foot {
+        font-size: 11px;
+        color: #bdcce0;
+        padding: 0 5px;
+        line-height: 1.7;
+      }
+
+      .sidebar a:focus-visible {
+        outline-color: var(--gold);
+      }
+
+      .shell {
+        margin-left: 224px;
+        min-width: 0;
+      }
+
+      .topbar {
+        height: 80px;
+        padding: 0 38px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .breadcrumb {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .breadcrumb strong {
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .year {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+      }
+
+      .year select {
+        height: 36px;
+        min-width: 86px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 0 12px;
+        background: var(--surface);
+        color: var(--ink);
+        font-weight: 650;
+      }
+
+      .year select:disabled {
+        opacity: 1;
+        cursor: default;
+      }
+
+      .edition {
+        background: var(--blue-soft);
+        color: var(--blue);
+        font-size: 11px;
+        padding: 6px 9px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+
+      main {
+        padding: 32px 38px 36px;
+        outline: none;
+        display: grid;
+        gap: 24px;
+        max-width: 1600px;
+        margin: auto;
+      }
+
+      .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .page-heading .eyebrow {
+        color: var(--blue);
+        margin-bottom: 1px;
+      }
+
+      .btn {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        min-height: 42px;
+        border-radius: 8px;
+        padding: 10px 15px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 12px;
+        font-weight: 650;
+        white-space: nowrap;
+      }
+
+      .btn:hover {
+        background: var(--blue-soft);
+        border-color: #b6c9eb;
+      }
+
+      .btn-primary {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background: #194cbb;
+        color: #fff;
+      }
+
+      .btn .icon {
+        width: 16px;
+        height: 16px;
+      }
+
+      .inline-link {
+        font-size: 12px;
+        font-weight: 650;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .inline-link .icon {
+        width: 15px;
+        height: 15px;
+      }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .metric {
+        padding: 21px 22px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 10px;
+      }
+
+      .metric-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .metric-label .icon {
+        color: var(--blue);
+        width: 17px;
+        height: 17px;
+      }
+
+      .metric-value {
+        font-size: 28px;
+        letter-spacing: -1px;
+        line-height: 1.2;
+        font-weight: 730;
+      }
+
+      .metric-note {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .metric-note b {
+        color: var(--success);
+        font-weight: 600;
+      }
+
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .panel-pad {
+        padding: 24px;
+      }
+
+      .panel-header {
+        padding: 23px 24px 0;
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .panel-header .sub {
+        margin-top: 5px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.7;
+      }
+
+      .panel-header > div {
+        min-width: 0;
+      }
+
+      .section-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+      }
+
+      .select-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .filter {
+        height: 38px;
+        border-radius: 8px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        padding: 0 30px 0 11px;
+        color: var(--ink);
+        min-width: 122px;
+        font-size: 12px;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 290px;
+        gap: 24px;
+      }
+
+      .chart-body {
+        padding: 22px 24px 16px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .chart-caption {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .hist {
+        height: 210px;
+        display: flex;
+        min-width: 0;
+        gap: 12px;
+      }
+
+      .y-axis {
+        width: 42px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-size: 10px;
+        color: var(--muted);
+        padding-bottom: 1px;
+        text-align: right;
+      }
+
+      .plot {
+        display: flex;
+        gap: 3px;
+        align-items: stretch;
+        flex: 1;
+        min-width: 0;
+        border-bottom: 1px solid #b7c5d8;
+        background: repeating-linear-gradient(
+          to top,
+          transparent 0,
+          transparent calc(25% - 1px),
+          var(--line) calc(25% - 1px),
+          var(--line) 25%
+        );
+      }
+
+      .bin {
+        height: 100%;
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: end;
+        position: relative;
+      }
+
+      .bar {
+        width: 100%;
+        min-height: 0;
+        background: #a7c0ed;
+        border: 1px solid #83a8e4;
+        border-bottom: 0;
+        border-radius: 3px 3px 0 0;
+      }
+
+      .bin.peak .bar {
+        background: var(--blue);
+        border-color: var(--blue);
+      }
+
+      .bin:hover .bar,
+      .bin:focus .bar {
+        background: #477adf;
+      }
+
+      .bin:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 2px;
+      }
+
+      .x-axis {
+        display: flex;
+        justify-content: space-between;
+        padding-left: 54px;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .hist-hint {
+        padding-left: 54px;
+        font-size: 11px;
+        color: var(--muted);
+        min-height: 32px;
+        line-height: 1.5;
+      }
+
+      .hist-hint strong {
+        color: var(--ink);
+      }
+
+      .chart-foot {
+        border-top: 1px solid var(--line);
+        padding: 13px 24px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .stat-list {
+        display: grid;
+        gap: 0;
+        padding: 8px 24px 17px;
+      }
+
+      .stat-list div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 13px 0;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+      }
+
+      .stat-list div:last-child {
+        border: 0;
+      }
+
+      .stat-list dt {
+        color: var(--muted);
+      }
+
+      .stat-list dd {
+        margin: 0;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .callout {
+        margin: 0 24px 22px;
+        background: var(--blue-soft);
+        padding: 12px 14px;
+        border-radius: 8px;
+        font-size: 11px;
+        line-height: 1.75;
+        color: #304f80;
+      }
+
+      .callout strong {
+        color: var(--blue);
+      }
+
+      .legend {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .legend span {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .swatch {
+        width: 9px;
+        height: 9px;
+        display: inline-block;
+        border-radius: 2px;
+      }
+
+      .band-chart {
+        display: grid;
+        gap: 15px;
+        padding: 24px;
+      }
+
+      .band-row {
+        display: grid;
+        grid-template-columns: 80px minmax(0, 1fr) 76px;
+        gap: 16px;
+        align-items: center;
+        font-size: 11px;
+      }
+
+      .band-label {
+        font-weight: 600;
+      }
+
+      .band-track {
+        display: flex;
+        gap: 2px;
+        height: 24px;
+        border-radius: 4px;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .band-segment {
+        min-width: 0;
+      }
+
+      .band-total {
+        text-align: right;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+
+      .band-axis {
+        margin: 0 92px 0 96px;
+        display: flex;
+        justify-content: space-between;
+        color: var(--muted);
+        font-size: 10px;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+      }
+
+      .data-table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 12px;
+        white-space: nowrap;
+        text-align: left;
+      }
+
+      .data-table th {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--muted);
+        font-weight: 650;
+        background: #f8fafd;
+        padding: 13px 20px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .data-table td {
+        padding: 15px 20px;
+        border-bottom: 1px solid #edf1f6;
+      }
+
+      .data-table tbody tr:last-child td {
+        border: 0;
+      }
+
+      .data-table tbody tr:hover {
+        background: #f8faff;
+      }
+
+      .data-table td.num,
+      .data-table th.num {
+        text-align: right;
+      }
+
+      .data-table th:first-child,
+      .data-table td:first-child {
+        padding-left: 24px;
+      }
+
+      .table-title {
+        padding: 22px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .table-note {
+        padding: 14px 24px;
+        background: #f8fafd;
+        border-top: 1px solid var(--line);
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .subject-cell {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 650;
+      }
+
+      .subject-mark {
+        width: 28px;
+        height: 28px;
+        background: var(--blue-soft);
+        color: var(--blue);
+        border-radius: 7px;
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+      }
+
+      .rank {
+        display: inline-grid;
+        place-items: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .rank-1 {
+        background: #fff1bf;
+        color: #805800;
+      }
+
+      .rank-2 {
+        background: #eaf0f7;
+        color: #465b77;
+      }
+
+      .rank-3 {
+        background: #f5e7da;
+        color: #82502b;
+      }
+
+      .total-score {
+        font-weight: 750;
+        color: var(--blue);
+      }
+
+      .rank-preview {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 270px;
+        gap: 0;
+      }
+
+      .preview-side {
+        border-left: 1px solid var(--line);
+        padding: 24px;
+        display: grid;
+        align-content: start;
+        gap: 18px;
+      }
+
+      .preview-side .metric-value {
+        font-size: 26px;
+      }
+
+      .preview-side .mini-stat {
+        display: grid;
+        gap: 6px;
+      }
+
+      .group-description {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .group-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .group-tab {
+        display: grid;
+        gap: 6px;
+        flex: 1;
+        min-width: 108px;
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 15px 16px;
+        color: var(--ink);
+        background: var(--surface);
+      }
+
+      .group-tab strong {
+        font-size: 16px;
+      }
+
+      .group-tab span {
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .group-tab[aria-pressed='true'] {
+        border: 2px solid var(--blue);
+        background: var(--blue-soft);
+        padding: 14px 15px;
+        color: var(--blue);
+      }
+
+      .group-tab:hover {
+        background: var(--blue-soft);
+      }
+
+      .group-rule {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 14px 18px;
+        background: var(--blue-soft);
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 1.8;
+      }
+
+      .group-rule .icon {
+        margin-top: 2px;
+        color: var(--blue);
+      }
+
+      .group-rule strong {
+        font-weight: 650;
+      }
+
+      .lookup-layout {
+        display: grid;
+        grid-template-columns: 330px minmax(0, 1fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      .lookup-form {
+        display: grid;
+        gap: 20px;
+        padding: 24px;
+      }
+
+      .field {
+        display: grid;
+        gap: 9px;
+      }
+
+      .field label {
+        font-weight: 650;
+        font-size: 12px;
+      }
+
+      .field input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #b8c7da;
+        border-radius: 8px;
+        padding: 12px;
+        color: var(--ink);
+        background: var(--surface);
+        font-size: 16px;
+      }
+
+      .field input::placeholder {
+        color: #7e8da1;
+        font-size: 13px;
+      }
+
+      .field input[aria-invalid='true'] {
+        border-color: var(--danger);
+      }
+
+      .helper {
+        font-size: 11px;
+        line-height: 1.8;
+        color: var(--muted);
+      }
+
+      .field-error {
+        font-size: 11px;
+        line-height: 1.7;
+        color: var(--danger);
+        min-height: 0;
+      }
+
+      .samples {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .sample-btn {
+        border: 1px solid var(--line);
+        border-radius: 5px;
+        background: var(--bg);
+        padding: 7px 8px;
+        font-size: 11px;
+        color: var(--blue);
+      }
+
+      .lookup-note {
+        border-top: 1px solid var(--line);
+        padding: 19px 24px;
+        font-size: 11px;
+        line-height: 1.9;
+        color: var(--muted);
+      }
+
+      .lookup-note strong {
+        color: var(--ink);
+      }
+
+      .result-empty {
+        min-height: 430px;
+        display: grid;
+        align-content: center;
+        justify-items: center;
+        text-align: center;
+        padding: 40px 24px;
+        gap: 15px;
+      }
+
+      .empty-icon {
+        width: 68px;
+        height: 68px;
+        border-radius: 20px;
+        display: grid;
+        place-items: center;
+        color: var(--blue);
+        background: var(--blue-soft);
+        margin-bottom: 4px;
+      }
+
+      .empty-icon .icon {
+        width: 30px;
+        height: 30px;
+      }
+
+      .result-empty p {
+        font-size: 12px;
+        max-width: 43ch;
+        color: var(--muted);
+      }
+
+      .result-head {
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        align-items: center;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .result-head h2 {
+        font-size: 23px;
+        margin-top: 5px;
+      }
+
+      .status-label {
+        font-size: 10px;
+        padding: 6px 9px;
+        background: #e9f5ef;
+        color: var(--success);
+        border-radius: 5px;
+        white-space: nowrap;
+      }
+
+      .score-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        padding: 8px 24px 24px;
+        gap: 0 20px;
+      }
+
+      .subject-score {
+        padding: 22px 0 17px;
+        border-bottom: 1px solid var(--line);
+        display: grid;
+        gap: 10px;
+      }
+
+      .subject-score h3 {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .subject-score strong {
+        font-size: 25px;
+        letter-spacing: -0.5px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .subject-score .missing {
+        font-size: 12px;
+        line-height: 1.8;
+        color: var(--muted);
+        font-weight: 500;
+        letter-spacing: 0;
+      }
+
+      .subject-score .point-scale {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 400;
+      }
+
+      .results-note {
+        padding: 0 24px 22px;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      .result-group {
+        margin: 0 24px 24px;
+        padding: 16px;
+        background: var(--blue-soft);
+        border-radius: 9px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        font-size: 12px;
+      }
+
+      .result-group strong {
+        font-size: 20px;
+        color: var(--blue);
+      }
+
+      .error-icon {
+        color: var(--danger);
+        background: var(--danger-bg);
+      }
+
+      .page-state {
+        min-height: 480px;
+      }
+
+      .skeleton-layout {
+        display: grid;
+        gap: 20px;
+        padding: 24px;
+      }
+
+      .skeleton-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+      }
+
+      .skeleton {
+        background: #e9eef5;
+        border-radius: 8px;
+        height: 86px;
+      }
+
+      .skeleton-chart {
+        height: 260px;
+        background: repeating-linear-gradient(
+          to top,
+          #edf1f6 0,
+          #edf1f6 1px,
+          transparent 1px,
+          transparent 65px
+        );
+        border-bottom: 1px solid var(--line);
+      }
+
+      .loading-message {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .footer {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        font-size: 10px;
+        color: var(--muted);
+        padding: 0 38px 24px;
+        max-width: 1600px;
+        margin: auto;
+      }
+
+      .review-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        border-top: 1px solid #e4d9b7;
+        background: #fff9e9;
+        color: #6e571c;
+        padding: 10px 38px;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+
+      .review-bar label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+
+      .review-bar select {
+        max-width: 150px;
+        background: #fffdf7;
+        border: 1px solid #d9cba7;
+        border-radius: 5px;
+        color: #6e571c;
+        padding: 5px;
+        font-size: 10px;
+      }
+
+      .review-bar strong {
+        font-size: 10px;
+        letter-spacing: 0.5px;
+      }
+
+      .mobile-brand {
+        display: none;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+      }
+
+      .chart-details {
+        padding: 0 24px 18px;
+      }
+
+      .chart-details summary {
+        font-size: 11px;
+        color: var(--blue);
+        cursor: pointer;
+        width: max-content;
+        padding: 6px 0;
+      }
+
+      .chart-details .data-table {
+        margin-top: 10px;
+      }
+
+      .chart-details .data-table th,
+      .chart-details .data-table td {
+        padding: 10px 13px;
+      }
+
+      .chart-details .table-wrap {
+        max-height: 290px;
+      }
+
+      .notice {
+        font-size: 11px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 12px 16px;
+        background: var(--surface);
+        color: var(--muted);
+        line-height: 1.8;
+      }
+
+      @media (min-width: 1700px) {
+        main {
+          padding-top: 42px;
+        }
+
+        .topbar {
+          padding-inline: max(38px, calc((100vw - 224px - 1524px) / 2));
+        }
+      }
+
+      @media (max-width: 1200px) {
+        .sidebar {
+          width: 200px;
+          padding-inline: 14px;
+        }
+
+        .shell {
+          margin-left: 200px;
+        }
+
+        main {
+          padding: 28px 24px;
+        }
+
+        .topbar {
+          padding-inline: 24px;
+        }
+
+        .footer,
+        .review-bar {
+          padding-inline: 24px;
+        }
+
+        .split {
+          grid-template-columns: minmax(0, 1fr) 245px;
+          gap: 16px;
+        }
+
+        .metric {
+          padding: 18px;
+        }
+
+        .metric-value {
+          font-size: 24px;
+        }
+
+        .panel-header,
+        .chart-body {
+          padding-inline: 20px;
+        }
+
+        .lookup-layout {
+          grid-template-columns: 285px minmax(0, 1fr);
+        }
+
+        .rank-preview {
+          grid-template-columns: minmax(0, 1fr) 220px;
+        }
+
+        .lookup-form {
+          padding: 20px;
+        }
+
+        .score-grid {
+          gap: 0 12px;
+          padding-inline: 20px;
+        }
+
+        .subject-score h3 {
+          min-height: 26px;
+        }
+      }
+
+      @media (max-width: 950px) {
+        .sidebar {
+          width: 178px;
+          padding: 28px 12px;
+          gap: 32px;
+        }
+
+        .shell {
+          margin-left: 178px;
+        }
+
+        .brand {
+          gap: 8px;
+        }
+
+        .brand-name {
+          font-size: 21px;
+        }
+
+        .brand-mark {
+          width: 32px;
+          height: 32px;
+          font-size: 24px;
+        }
+
+        .brand-caption {
+          font-size: 8px;
+        }
+
+        .nav a {
+          font-size: 12px;
+          padding-inline: 10px;
+        }
+
+        .sidebar-label {
+          font-size: 9px;
+        }
+
+        .metrics {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .split {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .stat-list {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 0 25px;
+        }
+
+        .stat-list div {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 7px;
+        }
+
+        .stat-list div:last-child {
+          border-bottom: 1px solid var(--line);
+        }
+
+        .callout {
+          margin-top: 0;
+        }
+
+        .rank-preview {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .preview-side {
+          border-left: 0;
+          border-top: 1px solid var(--line);
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 15px;
+        }
+
+        .lookup-layout {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .lookup-form {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 16px;
+        }
+
+        .lookup-form h2,
+        .lookup-form > .helper {
+          grid-column: 1/-1;
+        }
+
+        .lookup-form .btn-primary {
+          align-self: start;
+        }
+
+        .lookup-form .field {
+          grid-column: 1/-1;
+        }
+
+        .lookup-form > .sample-area {
+          grid-column: 1/-1;
+        }
+
+        .score-grid {
+          gap: 0 20px;
+        }
+
+        .page-heading {
+          align-items: flex-start;
+        }
+
+        .page-heading > .btn {
+          display: none;
+        }
+
+        .review-bar {
+          align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .sidebar {
+          position: static;
+          width: auto;
+          padding: 0;
+          gap: 0;
+          background: var(--surface);
+          color: var(--ink);
+          border-bottom: 1px solid var(--line);
+        }
+
+        .sidebar > .brand,
+        .sidebar-label,
+        .sidebar-end {
+          display: none;
+        }
+
+        .nav {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 0;
+          padding: 0 8px;
+        }
+
+        .nav a {
+          flex-direction: column;
+          justify-content: center;
+          gap: 6px;
+          padding: 12px 2px 10px;
+          min-height: 65px;
+          color: var(--muted);
+          border-radius: 0;
+          font-size: 10px;
+        }
+
+        .nav a:hover {
+          background: var(--blue-soft);
+        }
+
+        .nav a[aria-current='page'] {
+          background: var(--blue-soft);
+          color: var(--blue);
+          box-shadow: inset 0 -3px var(--blue);
+        }
+
+        .nav a[aria-current='page'] svg {
+          color: var(--blue);
+        }
+
+        .nav .icon {
+          width: 19px;
+          height: 19px;
+        }
+
+        .shell {
+          margin-left: 0;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .mobile-brand {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 17px 20px;
+          background: var(--surface);
+          border-bottom: 1px solid var(--line);
+        }
+
+        .mobile-brand .brand-caption {
+          color: var(--muted);
+          font-size: 8px;
+        }
+
+        .mobile-brand .brand-mark {
+          width: 32px;
+          height: 32px;
+        }
+
+        .mobile-brand .brand-name {
+          font-size: 21px;
+        }
+
+        .topbar {
+          height: 51px;
+          padding: 0 20px;
+          gap: 10px;
+          order: 0;
+        }
+
+        .breadcrumb {
+          font-size: 10px;
+          gap: 6px;
+        }
+
+        .year {
+          font-size: 10px;
+          gap: 7px;
+        }
+
+        .year select {
+          height: 29px;
+          font-size: 11px;
+          min-width: 69px;
+          padding-inline: 8px;
+        }
+
+        .edition {
+          display: none;
+        }
+
+        main {
+          padding: 24px 18px;
+          gap: 20px;
+          max-width: 100%;
+          width: 100%;
+        }
+
+        h1 {
+          font-size: 27px;
+        }
+
+        .page-heading {
+          gap: 12px;
+        }
+
+        .page-heading .eyebrow {
+          font-size: 9px;
+        }
+
+        .metrics {
+          gap: 10px;
+        }
+
+        .metric {
+          padding: 15px 14px;
+          gap: 9px;
+          border-radius: 11px;
+        }
+
+        .metric-label {
+          font-size: 10px;
+          gap: 4px;
+        }
+
+        .metric-label .icon {
+          width: 14px;
+          height: 14px;
+        }
+
+        .metric-value {
+          font-size: 24px;
+        }
+
+        .metric-note {
+          font-size: 9px;
+          line-height: 1.6;
+        }
+
+        .panel {
+          border-radius: 11px;
+        }
+
+        .panel-header {
+          padding: 18px 17px 0;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        .panel-header h2 {
+          font-size: 15px;
+        }
+
+        .panel-header .sub {
+          font-size: 10px;
+        }
+
+        .filter {
+          font-size: 11px;
+          height: 35px;
+          min-width: 100px;
+        }
+
+        .chart-body {
+          padding: 20px 17px 14px;
+          gap: 12px;
+        }
+
+        .hist {
+          height: 174px;
+          gap: 8px;
+        }
+
+        .y-axis {
+          width: 34px;
+          font-size: 9px;
+        }
+
+        .plot {
+          gap: 2px;
+        }
+
+        .bar {
+          border-radius: 2px 2px 0 0;
+        }
+
+        .x-axis,
+        .hist-hint {
+          padding-left: 42px;
+          font-size: 9px;
+        }
+
+        .chart-caption {
+          font-size: 10px;
+        }
+
+        .chart-foot {
+          padding: 12px 17px;
+          flex-wrap: wrap;
+          gap: 5px;
+          font-size: 9px;
+        }
+
+        .chart-details {
+          padding: 0 17px 15px;
+        }
+
+        .chart-details summary {
+          font-size: 10px;
+        }
+
+        .stat-list {
+          padding: 6px 17px 15px;
+          gap: 0 14px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .stat-list div {
+          font-size: 11px;
+        }
+
+        .callout {
+          margin: 0 17px 17px;
+          font-size: 10px;
+        }
+
+        .section-top {
+          align-items: flex-start;
+          gap: 12px;
+          flex-direction: column;
+        }
+
+        .legend {
+          gap: 9px;
+          font-size: 9px;
+        }
+
+        .band-chart {
+          padding: 20px 17px;
+          gap: 13px;
+        }
+
+        .band-row {
+          grid-template-columns: 51px minmax(0, 1fr) 54px;
+          gap: 8px;
+          font-size: 9px;
+        }
+
+        .band-track {
+          height: 21px;
+          gap: 1px;
+        }
+
+        .band-axis {
+          margin: 0 62px 0 59px;
+          font-size: 8px;
+        }
+
+        .table-title {
+          padding: 18px 17px;
+          align-items: flex-start;
+        }
+
+        .table-title h2 {
+          font-size: 15px;
+        }
+
+        .inline-link {
+          font-size: 10px;
+        }
+
+        .data-table th {
+          font-size: 9px;
+          padding: 12px 14px;
+        }
+
+        .data-table td {
+          font-size: 11px;
+          padding: 13px 14px;
+        }
+
+        .data-table th:first-child,
+        .data-table td:first-child {
+          padding-left: 17px;
+        }
+
+        .subject-cell {
+          gap: 8px;
+        }
+
+        .subject-mark {
+          width: 24px;
+          height: 24px;
+        }
+
+        .table-note {
+          padding: 12px 17px;
+          font-size: 10px;
+        }
+
+        .preview-side {
+          padding: 18px 17px;
+          gap: 10px;
+        }
+
+        .preview-side .metric-value {
+          font-size: 20px;
+        }
+
+        .preview-side .metric-note {
+          font-size: 9px;
+        }
+
+        .preview-side .mini-stat {
+          gap: 7px;
+        }
+
+        .group-tabs {
+          gap: 8px;
+        }
+
+        .group-tab {
+          min-width: calc(33.333% - 8px);
+          padding: 13px 12px;
+        }
+
+        .group-tab[aria-pressed='true'] {
+          padding: 12px 11px;
+        }
+
+        .group-tab strong {
+          font-size: 14px;
+        }
+
+        .group-tab span {
+          font-size: 9px;
+        }
+
+        .group-rule {
+          padding: 13px 14px;
+          font-size: 10px;
+        }
+
+        .lookup-layout {
+          gap: 18px;
+        }
+
+        .lookup-form {
+          padding: 20px;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .lookup-form > * {
+          grid-column: 1 !important;
+        }
+
+        .lookup-form > .helper {
+          font-size: 11px;
+        }
+
+        .lookup-note {
+          padding: 16px 20px;
+          font-size: 10px;
+        }
+
+        .result-empty {
+          min-height: 315px;
+          padding: 30px 20px;
+        }
+
+        .result-empty p {
+          font-size: 11px;
+        }
+
+        .result-head {
+          padding: 20px;
+        }
+
+        .result-head h2 {
+          font-size: 21px;
+        }
+
+        .status-label {
+          font-size: 9px;
+        }
+
+        .score-grid {
+          padding: 4px 20px 20px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0 18px;
+        }
+
+        .subject-score strong {
+          font-size: 24px;
+        }
+
+        .subject-score h3 {
+          min-height: 0;
+          font-size: 10px;
+        }
+
+        .subject-score {
+          padding: 18px 0;
+          gap: 10px;
+        }
+
+        .subject-score .missing {
+          font-size: 10px;
+        }
+
+        .results-note {
+          padding: 0 20px 18px;
+          font-size: 10px;
+        }
+
+        .result-group {
+          margin: 0 20px 20px;
+          padding: 13px;
+          font-size: 11px;
+        }
+
+        .footer {
+          padding: 0 18px 20px;
+          font-size: 9px;
+          gap: 5px;
+        }
+
+        .footer .source-name {
+          overflow-wrap: anywhere;
+        }
+
+        .review-bar {
+          padding: 12px 18px;
+          flex-direction: column;
+          gap: 9px;
+          font-size: 9px;
+        }
+
+        .review-bar strong {
+          font-size: 9px;
+        }
+
+        .review-bar label {
+          font-size: 10px;
+        }
+
+        .notice {
+          font-size: 10px;
+          padding: 10px 13px;
+        }
+
+        .skeleton-row {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .page-state {
+          min-height: 350px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to main content</a>
+    <div class="mobile-brand">
+      <a class="brand" href="#/">
+        <span class="brand-mark" aria-hidden="true">g.</span>
+        <span>
+          <span class="brand-name">G-Scores</span>
+          <span class="brand-caption" style="display: block">SCORES IN FOCUS</span>
+        </span>
+      </a>
+      <span class="edition">EXAM 2024</span>
+    </div>
+    <aside class="sidebar" aria-label="Application navigation">
+      <a class="brand" href="#/" aria-label="G-Scores, return to dashboard">
+        <span class="brand-mark" aria-hidden="true">g.</span>
+        <span>
+          <span class="brand-name">G-Scores</span>
+          <span class="brand-caption" style="display: block">EXAM INSIGHTS</span>
+        </span>
+      </a>
+      <div>
+        <p class="eyebrow sidebar-label">Explore data</p>
+        <nav class="nav" aria-label="Main navigation" id="nav"></nav>
+      </div>
+      <div class="sidebar-end">
+        <div class="dataset-badge">
+          <span class="eyebrow">National high school exam</span>
+          <strong>Class of 2024</strong>
+          <small>
+            <span class="live-dot" aria-hidden="true"></span>
+            Data snapshot available
+          </small>
+        </div>
+      </div>
+    </aside>
+    <div class="shell">
+      <header class="topbar">
+        <div class="breadcrumb">
+          <span>G-Scores</span>
+          <span aria-hidden="true">/</span>
+          <strong id="crumb">Dashboard</strong>
+        </div>
+        <div class="year">
+          <span class="edition">National high school exam</span>
+          <label for="year">Exam year</label>
+          <select id="year" disabled aria-describedby="year-help">
+            <option>2024</option>
+          </select>
+          <span id="year-help" class="sr-only">Only 2024 data is available.</span>
+        </div>
+      </header>
+      <main id="main" tabindex="-1"></main>
+      <footer class="footer">
+        <span class="source-name">
+          Source: diem_thi_thpt_2024.csv ·
+          <span id="dataset-count">1,061,605</span>
+          candidates
+        </span>
+        <span>G-Scores · Exam data insights · 2024</span>
+      </footer>
+      <div class="review-bar" aria-label="Design review tools">
+        <span>
+          <strong>INTERACTIVE PROTOTYPE</strong>
+          · Aggregated from the 2024 CSV · API not connected.
+        </span>
+        <label for="review-state">
+          Preview state
+          <select id="review-state">
+            <option value="ready">Data available</option>
+            <option value="loading">Loading</option>
+            <option value="empty">No data</option>
+            <option value="error">Connection error</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+    <script id="snapshot" type="application/json">
+      {
+        "year": 2024,
+        "total": 1061605,
+        "source": "diem_thi_thpt_2024.csv",
+        "subjects": [
+          {
+            "key": "toan",
+            "name": "Mathematics",
+            "short": "Math",
+            "valid": 1045613,
+            "mean": 6.447309281732342,
+            "median": 6.8,
+            "std": 1.5568994428742597,
+            "min": 0.0,
+            "max": 9.8,
+            "missing": 15992,
+            "zero": 1,
+            "ten": 0,
+            "bins": [
+              2, 17, 447, 1775, 9189, 12985, 30439, 27877, 54033, 46151, 86492, 71978, 130309,
+              100898, 162622, 112007, 142762, 43932, 11434, 264
+            ],
+            "bands": [82731, 258654, 505836, 198392]
+          },
+          {
+            "key": "ngu_van",
+            "name": "Literature",
+            "short": "Literature",
+            "valid": 1050101,
+            "mean": 7.231146118325761,
+            "median": 7.5,
+            "std": 1.3300567026461665,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 11504,
+            "zero": 20,
+            "ten": 2,
+            "bins": [
+              30, 22, 194, 691, 1416, 2691, 4800, 8206, 14592, 20552, 44069, 61843, 92267, 120554,
+              143984, 156311, 156463, 129363, 76011, 16042
+            ],
+            "bands": [18050, 141056, 513116, 377879]
+          },
+          {
+            "key": "ngoai_ngu",
+            "name": "Foreign Language",
+            "short": "Foreign lang.",
+            "valid": 912705,
+            "mean": 5.521937975578089,
+            "median": 5.2,
+            "std": 1.8806564199555327,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 148900,
+            "zero": 3,
+            "ten": 645,
+            "bins": [
+              4, 39, 1102, 4274, 22171, 31178, 73268, 64002, 112961, 78937, 109453, 62181, 77572,
+              43638, 59513, 38929, 58384, 34894, 32284, 7921
+            ],
+            "bands": [196038, 363532, 219652, 133483]
+          },
+          {
+            "key": "vat_li",
+            "name": "Physics",
+            "short": "Physics",
+            "valid": 345615,
+            "mean": 6.666866310779335,
+            "median": 7.0,
+            "std": 1.6311267478100906,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 715990,
+            "zero": 4,
+            "ten": 55,
+            "bins": [
+              5, 13, 88, 508, 1605, 3781, 6975, 10581, 14693, 18239, 21579, 24761, 28215, 33063,
+              40127, 47236, 47329, 31964, 12661, 2192
+            ],
+            "bands": [23556, 79272, 148641, 94146]
+          },
+          {
+            "key": "hoa_hoc",
+            "name": "Chemistry",
+            "short": "Chemistry",
+            "valid": 346518,
+            "mean": 6.6808297115878545,
+            "median": 6.75,
+            "std": 1.641467960059908,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 715087,
+            "zero": 11,
+            "ten": 1278,
+            "bins": [
+              13, 0, 25, 217, 883, 2612, 5713, 10316, 15083, 20113, 24828, 28423, 31448, 34922,
+              38128, 40461, 38014, 29045, 17401, 8873
+            ],
+            "bands": [19779, 88447, 144959, 93333]
+          },
+          {
+            "key": "sinh_hoc",
+            "name": "Biology",
+            "short": "Biology",
+            "valid": 342378,
+            "mean": 6.2840785622908015,
+            "median": 6.25,
+            "std": 1.244847188448677,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 719227,
+            "zero": 35,
+            "ten": 34,
+            "bins": [
+              35, 3, 26, 113, 355, 954, 2387, 5755, 13035, 23205, 34835, 45188, 51139, 51305, 45318,
+              34287, 21255, 9558, 2975, 650
+            ],
+            "bands": [9628, 116263, 182049, 34438]
+          },
+          {
+            "key": "lich_su",
+            "name": "History",
+            "short": "History",
+            "valid": 706214,
+            "mean": 6.570343054654821,
+            "median": 6.5,
+            "std": 1.4628031741930663,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 355391,
+            "zero": 6,
+            "ten": 2108,
+            "bins": [
+              6, 6, 40, 194, 862, 2623, 6758, 14223, 26042, 41352, 58632, 74366, 86634, 92329,
+              88535, 75079, 57940, 39708, 25213, 15672
+            ],
+            "bands": [24712, 200392, 342577, 138533]
+          },
+          {
+            "key": "dia_li",
+            "name": "Geography",
+            "short": "Geography",
+            "valid": 704682,
+            "mean": 7.193541200144178,
+            "median": 7.25,
+            "std": 1.2839436616415967,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 356923,
+            "zero": 59,
+            "ten": 3175,
+            "bins": [
+              61, 3, 37, 127, 390, 961, 2089, 4186, 7862, 15031, 27020, 46313, 71168, 95171, 108944,
+              106804, 89066, 64629, 41377, 23443
+            ],
+            "bands": [7854, 96226, 382087, 218515]
+          },
+          {
+            "key": "gdcd",
+            "name": "Civic Education",
+            "short": "Civics",
+            "valid": 583609,
+            "mean": 8.156503326713604,
+            "median": 8.25,
+            "std": 1.0426434154850313,
+            "min": 0.0,
+            "max": 10.0,
+            "missing": 477996,
+            "zero": 23,
+            "ten": 3661,
+            "bins": [
+              23, 0, 6, 31, 74, 124, 266, 537, 1156, 2302, 4512, 8916, 17190, 31471, 52869, 79910,
+              106577, 119226, 104935, 53484
+            ],
+            "bands": [1061, 16886, 181440, 384222]
+          }
+        ],
+        "combinations": [
+          {
+            "key": "A00",
+            "subjects": [0, 3, 4],
+            "english": false,
+            "valid": 343800,
+            "mean": 20.904633362420014,
+            "median": 21.3,
+            "std": 3.3803486679462202,
+            "min": 2.15,
+            "max": 29.6,
+            "bins": [
+              0, 0, 2, 1, 2, 5, 24, 68, 191, 395, 896, 1713, 3083, 5199, 7899, 11316, 15321, 20113,
+              25658, 31606, 36412, 39927, 40394, 38213, 31196, 20244, 9788, 3442, 668, 24
+            ],
+            "top": [
+              {
+                "sbd": "26020938",
+                "scores": [9.6, 10.0, 10.0],
+                "total": 29.6
+              },
+              {
+                "sbd": "26009943",
+                "scores": [9.8, 9.75, 10.0],
+                "total": 29.55
+              },
+              {
+                "sbd": "19016615",
+                "scores": [9.6, 9.75, 10.0],
+                "total": 29.35
+              },
+              {
+                "sbd": "19013166",
+                "scores": [9.8, 9.75, 9.75],
+                "total": 29.3
+              },
+              {
+                "sbd": "26014736",
+                "scores": [9.8, 9.5, 10.0],
+                "total": 29.3
+              },
+              {
+                "sbd": "55006046",
+                "scores": [9.8, 9.5, 10.0],
+                "total": 29.3
+              },
+              {
+                "sbd": "19002020",
+                "scores": [9.2, 10.0, 10.0],
+                "total": 29.2
+              },
+              {
+                "sbd": "28035804",
+                "scores": [9.2, 10.0, 10.0],
+                "total": 29.2
+              },
+              {
+                "sbd": "32005631",
+                "scores": [9.2, 10.0, 10.0],
+                "total": 29.2
+              },
+              {
+                "sbd": "01095066",
+                "scores": [9.4, 9.75, 10.0],
+                "total": 29.15
+              }
+            ]
+          },
+          {
+            "key": "A01",
+            "subjects": [0, 3, 2],
+            "english": true,
+            "valid": 328850,
+            "mean": 20.472350007602248,
+            "median": 20.75,
+            "std": 3.3508576813392588,
+            "min": 5.2,
+            "max": 29.6,
+            "bins": [
+              0, 0, 0, 0, 0, 1, 19, 64, 149, 376, 928, 1732, 3375, 5737, 8862, 12787, 17323, 22505,
+              28427, 33842, 37491, 38281, 35345, 30714, 24719, 16496, 7535, 1940, 192, 10
+            ],
+            "top": [
+              {
+                "sbd": "02038432",
+                "scores": [9.8, 10.0, 9.8],
+                "total": 29.6
+              },
+              {
+                "sbd": "01015453",
+                "scores": [9.6, 10.0, 9.8],
+                "total": 29.4
+              },
+              {
+                "sbd": "37006720",
+                "scores": [9.6, 10.0, 9.8],
+                "total": 29.4
+              },
+              {
+                "sbd": "26020938",
+                "scores": [9.6, 10.0, 9.6],
+                "total": 29.2
+              },
+              {
+                "sbd": "02025243",
+                "scores": [9.4, 9.75, 10.0],
+                "total": 29.15
+              },
+              {
+                "sbd": "40002472",
+                "scores": [9.8, 9.75, 9.6],
+                "total": 29.15
+              },
+              {
+                "sbd": "02038225",
+                "scores": [9.8, 9.5, 9.8],
+                "total": 29.1
+              },
+              {
+                "sbd": "02037687",
+                "scores": [9.2, 10.0, 9.8],
+                "total": 29.0
+              },
+              {
+                "sbd": "02038016",
+                "scores": [9.6, 10.0, 9.4],
+                "total": 29.0
+              },
+              {
+                "sbd": "12008454",
+                "scores": [9.6, 10.0, 9.4],
+                "total": 29.0
+              }
+            ]
+          },
+          {
+            "key": "B00",
+            "subjects": [0, 4, 5],
+            "english": false,
+            "valid": 342291,
+            "mean": 20.531107449509335,
+            "median": 20.75,
+            "std": 2.981831230545571,
+            "min": 3.2,
+            "max": 29.55,
+            "bins": [
+              0, 0, 0, 1, 0, 3, 3, 15, 58, 136, 287, 766, 1751, 3554, 6845, 11635, 17950, 25123,
+              32257, 38704, 42910, 44385, 41175, 33635, 22366, 11822, 4948, 1595, 351, 16
+            ],
+            "top": [
+              {
+                "sbd": "03015805",
+                "scores": [9.8, 10.0, 9.75],
+                "total": 29.55
+              },
+              {
+                "sbd": "15000286",
+                "scores": [9.4, 10.0, 10.0],
+                "total": 29.4
+              },
+              {
+                "sbd": "29003629",
+                "scores": [9.4, 10.0, 10.0],
+                "total": 29.4
+              },
+              {
+                "sbd": "44002862",
+                "scores": [9.4, 10.0, 10.0],
+                "total": 29.4
+              },
+              {
+                "sbd": "02038228",
+                "scores": [9.6, 10.0, 9.75],
+                "total": 29.35
+              },
+              {
+                "sbd": "56010544",
+                "scores": [9.6, 10.0, 9.75],
+                "total": 29.35
+              },
+              {
+                "sbd": "55006046",
+                "scores": [9.8, 10.0, 9.5],
+                "total": 29.3
+              },
+              {
+                "sbd": "40019455",
+                "scores": [9.2, 10.0, 10.0],
+                "total": 29.2
+              },
+              {
+                "sbd": "29015912",
+                "scores": [9.4, 10.0, 9.75],
+                "total": 29.15
+              },
+              {
+                "sbd": "38006535",
+                "scores": [9.4, 10.0, 9.75],
+                "total": 29.15
+              }
+            ]
+          },
+          {
+            "key": "C00",
+            "subjects": [1, 6, 7],
+            "english": false,
+            "valid": 704008,
+            "mean": 20.952816956625494,
+            "median": 21.25,
+            "std": 3.465670903566354,
+            "min": 0.0,
+            "max": 29.75,
+            "bins": [
+              1, 2, 1, 2, 9, 22, 87, 218, 476, 919, 1702, 3098, 5273, 8551, 13644, 21319, 31079,
+              43156, 55717, 67976, 77552, 81156, 78152, 69242, 54727, 39939, 26645, 15723, 6664, 956
+            ],
+            "top": [
+              {
+                "sbd": "19000335",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19000407",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19000454",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19000475",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19000493",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19007470",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19007655",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19011935",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19015589",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              },
+              {
+                "sbd": "19016184",
+                "scores": [9.75, 10.0, 10.0],
+                "total": 29.75
+              }
+            ]
+          },
+          {
+            "key": "D01",
+            "subjects": [0, 1, 2],
+            "english": true,
+            "valid": 902723,
+            "mean": 19.49392803772586,
+            "median": 19.6,
+            "std": 3.6232301057295597,
+            "min": 3.85,
+            "max": 28.75,
+            "bins": [
+              0, 0, 0, 1, 5, 40, 164, 492, 1360, 2901, 5918, 10437, 17587, 27001, 37967, 51125,
+              65622, 79417, 90029, 94313, 93111, 84302, 73631, 62311, 50833, 34657, 16135, 3238,
+              126, 0
+            ],
+            "top": [
+              {
+                "sbd": "16000274",
+                "scores": [9.0, 9.75, 10.0],
+                "total": 28.75
+              },
+              {
+                "sbd": "03007888",
+                "scores": [9.4, 9.5, 9.8],
+                "total": 28.7
+              },
+              {
+                "sbd": "19000204",
+                "scores": [9.4, 9.5, 9.8],
+                "total": 28.7
+              },
+              {
+                "sbd": "19000448",
+                "scores": [9.2, 9.5, 10.0],
+                "total": 28.7
+              },
+              {
+                "sbd": "21000291",
+                "scores": [9.2, 9.5, 10.0],
+                "total": 28.7
+              },
+              {
+                "sbd": "50013600",
+                "scores": [9.4, 9.5, 9.8],
+                "total": 28.7
+              },
+              {
+                "sbd": "19000206",
+                "scores": [9.2, 9.75, 9.6],
+                "total": 28.55
+              },
+              {
+                "sbd": "19000443",
+                "scores": [8.8, 9.75, 10.0],
+                "total": 28.55
+              },
+              {
+                "sbd": "19008594",
+                "scores": [9.0, 9.75, 9.8],
+                "total": 28.55
+              },
+              {
+                "sbd": "25000073",
+                "scores": [9.0, 9.75, 9.8],
+                "total": 28.55
+              }
+            ]
+          },
+          {
+            "key": "D07",
+            "subjects": [0, 4, 2],
+            "english": true,
+            "valid": 327525,
+            "mean": 20.45103808869552,
+            "median": 20.7,
+            "std": 3.1120439353113696,
+            "min": 5.75,
+            "max": 29.4,
+            "bins": [
+              0, 0, 0, 0, 0, 1, 14, 36, 98, 290, 603, 1339, 2510, 4502, 7421, 11499, 16573, 23075,
+              29963, 36577, 41696, 42334, 38160, 30204, 20864, 12186, 5711, 1640, 217, 12
+            ],
+            "top": [
+              {
+                "sbd": "55006046",
+                "scores": [9.8, 10.0, 9.6],
+                "total": 29.4
+              },
+              {
+                "sbd": "02037987",
+                "scores": [9.4, 10.0, 9.8],
+                "total": 29.2
+              },
+              {
+                "sbd": "03007888",
+                "scores": [9.4, 10.0, 9.8],
+                "total": 29.2
+              },
+              {
+                "sbd": "25017518",
+                "scores": [9.2, 10.0, 10.0],
+                "total": 29.2
+              },
+              {
+                "sbd": "26015455",
+                "scores": [9.6, 10.0, 9.6],
+                "total": 29.2
+              },
+              {
+                "sbd": "26020938",
+                "scores": [9.6, 10.0, 9.6],
+                "total": 29.2
+              },
+              {
+                "sbd": "27008119",
+                "scores": [9.4, 10.0, 9.8],
+                "total": 29.2
+              },
+              {
+                "sbd": "33001732",
+                "scores": [9.2, 10.0, 10.0],
+                "total": 29.2
+              },
+              {
+                "sbd": "02023084",
+                "scores": [9.8, 9.5, 9.8],
+                "total": 29.1
+              },
+              {
+                "sbd": "01041488",
+                "scores": [9.2, 10.0, 9.8],
+                "total": 29.0
+              }
+            ]
+          }
+        ],
+        "samples": {
+          "01000001": {
+            "sbd": "01000001",
+            "scores": [840, 675, 800, 600, 525, 500, null, null, null],
+            "language": "N1"
+          },
+          "01000002": {
+            "sbd": "01000002",
+            "scores": [860, 850, 720, null, null, null, 725, 600, 800],
+            "language": "N1"
+          },
+          "01003254": {
+            "sbd": "01003254",
+            "scores": [820, 0, null, 875, 875, 0, null, null, null],
+            "language": null
+          },
+          "26020938": {
+            "sbd": "26020938",
+            "scores": [960, 800, 960, 1000, 1000, 875, null, null, null],
+            "language": "N1"
+          },
+          "26009943": {
+            "sbd": "26009943",
+            "scores": [980, 875, 740, 975, 1000, 850, null, null, null],
+            "language": "N1"
+          },
+          "19016615": {
+            "sbd": "19016615",
+            "scores": [960, 825, 760, 975, 1000, 800, null, null, null],
+            "language": "N1"
+          },
+          "19013166": {
+            "sbd": "19013166",
+            "scores": [980, 850, 620, 975, 975, 675, null, null, null],
+            "language": "N1"
+          },
+          "26014736": {
+            "sbd": "26014736",
+            "scores": [980, 825, 800, 950, 1000, 775, null, null, null],
+            "language": "N1"
+          },
+          "55006046": {
+            "sbd": "55006046",
+            "scores": [980, 700, 960, 950, 1000, 950, null, null, null],
+            "language": "N1"
+          },
+          "19002020": {
+            "sbd": "19002020",
+            "scores": [920, 850, 760, 1000, 1000, 750, null, null, null],
+            "language": "N1"
+          },
+          "28035804": {
+            "sbd": "28035804",
+            "scores": [920, 850, 700, 1000, 1000, 925, null, null, null],
+            "language": "N1"
+          },
+          "32005631": {
+            "sbd": "32005631",
+            "scores": [920, 775, 820, 1000, 1000, 900, null, null, null],
+            "language": "N1"
+          },
+          "01095066": {
+            "sbd": "01095066",
+            "scores": [940, 825, 720, 975, 1000, 725, null, null, null],
+            "language": "N1"
+          },
+          "02038432": {
+            "sbd": "02038432",
+            "scores": [980, 825, 980, 1000, 775, 825, null, null, null],
+            "language": "N1"
+          },
+          "01015453": {
+            "sbd": "01015453",
+            "scores": [960, 825, 980, 1000, 750, 775, null, null, null],
+            "language": "N1"
+          },
+          "37006720": {
+            "sbd": "37006720",
+            "scores": [960, 625, 980, 1000, 800, 750, null, null, null],
+            "language": "N1"
+          },
+          "02025243": {
+            "sbd": "02025243",
+            "scores": [940, 725, 1000, 975, 925, 825, null, null, null],
+            "language": "N1"
+          },
+          "40002472": {
+            "sbd": "40002472",
+            "scores": [980, null, 960, 975, null, null, null, null, null],
+            "language": "N1"
+          },
+          "02038225": {
+            "sbd": "02038225",
+            "scores": [980, 725, 980, 950, 800, 825, null, null, null],
+            "language": "N1"
+          },
+          "02037687": {
+            "sbd": "02037687",
+            "scores": [920, 625, 980, 1000, 850, 850, null, null, null],
+            "language": "N1"
+          },
+          "02038016": {
+            "sbd": "02038016",
+            "scores": [960, 775, 940, 1000, 850, 875, null, null, null],
+            "language": "N1"
+          },
+          "12008454": {
+            "sbd": "12008454",
+            "scores": [960, 850, 940, 1000, 850, 725, null, null, null],
+            "language": "N1"
+          },
+          "03015805": {
+            "sbd": "03015805",
+            "scores": [980, 800, null, 850, 1000, 975, null, null, null],
+            "language": null
+          },
+          "15000286": {
+            "sbd": "15000286",
+            "scores": [940, 725, 920, 650, 1000, 1000, null, null, null],
+            "language": "N1"
+          },
+          "29003629": {
+            "sbd": "29003629",
+            "scores": [940, 850, 620, 700, 1000, 1000, null, null, null],
+            "language": "N1"
+          },
+          "44002862": {
+            "sbd": "44002862",
+            "scores": [940, 750, 860, 850, 1000, 1000, null, null, null],
+            "language": "N1"
+          },
+          "02038228": {
+            "sbd": "02038228",
+            "scores": [960, 625, 900, 725, 1000, 975, null, null, null],
+            "language": "N1"
+          },
+          "56010544": {
+            "sbd": "56010544",
+            "scores": [960, 875, null, 825, 1000, 975, null, null, null],
+            "language": null
+          },
+          "40019455": {
+            "sbd": "40019455",
+            "scores": [920, 850, null, 800, 1000, 1000, null, null, null],
+            "language": null
+          },
+          "29015912": {
+            "sbd": "29015912",
+            "scores": [940, 750, 780, 700, 1000, 975, null, null, null],
+            "language": "N1"
+          },
+          "38006535": {
+            "sbd": "38006535",
+            "scores": [940, 725, 880, 675, 1000, 975, null, null, null],
+            "language": "N1"
+          },
+          "19000335": {
+            "sbd": "19000335",
+            "scores": [660, 975, 960, null, null, null, 1000, 1000, 900],
+            "language": "N1"
+          },
+          "19000407": {
+            "sbd": "19000407",
+            "scores": [660, 975, 720, null, null, null, 1000, 1000, 950],
+            "language": "N1"
+          },
+          "19000454": {
+            "sbd": "19000454",
+            "scores": [640, 975, 880, null, null, null, 1000, 1000, 950],
+            "language": "N1"
+          },
+          "19000475": {
+            "sbd": "19000475",
+            "scores": [740, 975, 960, null, null, null, 1000, 1000, 1000],
+            "language": "N1"
+          },
+          "19000493": {
+            "sbd": "19000493",
+            "scores": [820, 975, 780, null, null, null, 1000, 1000, 950],
+            "language": "N1"
+          },
+          "19007470": {
+            "sbd": "19007470",
+            "scores": [820, 975, 580, null, null, null, 1000, 1000, 950],
+            "language": "N1"
+          },
+          "19007655": {
+            "sbd": "19007655",
+            "scores": [680, 975, 440, null, null, null, 1000, 1000, 950],
+            "language": "N1"
+          },
+          "19011935": {
+            "sbd": "19011935",
+            "scores": [780, 975, 560, null, null, null, 1000, 1000, 950],
+            "language": "N1"
+          },
+          "19015589": {
+            "sbd": "19015589",
+            "scores": [820, 975, 620, null, null, null, 1000, 1000, 925],
+            "language": "N1"
+          },
+          "19016184": {
+            "sbd": "19016184",
+            "scores": [840, 975, 880, null, null, null, 1000, 1000, 950],
+            "language": "N1"
+          },
+          "16000274": {
+            "sbd": "16000274",
+            "scores": [900, 975, 1000, null, null, null, 900, 975, 950],
+            "language": "N1"
+          },
+          "03007888": {
+            "sbd": "03007888",
+            "scores": [940, 950, 980, 850, 1000, 775, null, null, null],
+            "language": "N1"
+          },
+          "19000204": {
+            "sbd": "19000204",
+            "scores": [940, 950, 980, null, null, null, 850, 800, 850],
+            "language": "N1"
+          },
+          "19000448": {
+            "sbd": "19000448",
+            "scores": [920, 950, 1000, 425, 950, 875, null, null, null],
+            "language": "N1"
+          },
+          "21000291": {
+            "sbd": "21000291",
+            "scores": [920, 950, 1000, null, null, null, 950, 925, 1000],
+            "language": "N1"
+          },
+          "50013600": {
+            "sbd": "50013600",
+            "scores": [940, 950, 980, 775, 800, 750, null, null, null],
+            "language": "N1"
+          },
+          "19000206": {
+            "sbd": "19000206",
+            "scores": [920, 975, 960, 625, 1000, 800, null, null, null],
+            "language": "N1"
+          },
+          "19000443": {
+            "sbd": "19000443",
+            "scores": [880, 975, 1000, null, null, null, 725, 800, 850],
+            "language": "N1"
+          },
+          "19008594": {
+            "sbd": "19008594",
+            "scores": [900, 975, 980, null, null, null, 800, 825, 925],
+            "language": "N1"
+          },
+          "25000073": {
+            "sbd": "25000073",
+            "scores": [900, 975, 980, null, null, null, 850, 875, 950],
+            "language": "N1"
+          },
+          "02037987": {
+            "sbd": "02037987",
+            "scores": [940, 825, 980, 825, 1000, 925, null, null, null],
+            "language": "N1"
+          },
+          "25017518": {
+            "sbd": "25017518",
+            "scores": [920, 800, 1000, 975, 1000, 950, null, null, null],
+            "language": "N1"
+          },
+          "26015455": {
+            "sbd": "26015455",
+            "scores": [960, 775, 960, 900, 1000, 875, null, null, null],
+            "language": "N1"
+          },
+          "27008119": {
+            "sbd": "27008119",
+            "scores": [940, 900, 980, 925, 1000, 850, null, null, null],
+            "language": "N1"
+          },
+          "33001732": {
+            "sbd": "33001732",
+            "scores": [920, 900, 1000, 825, 1000, 925, null, null, null],
+            "language": "N1"
+          },
+          "02023084": {
+            "sbd": "02023084",
+            "scores": [980, 825, 980, 825, 950, 850, null, null, null],
+            "language": "N1"
+          },
+          "01041488": {
+            "sbd": "01041488",
+            "scores": [920, 750, 980, 950, 1000, 725, null, null, null],
+            "language": "N1"
+          }
+        }
+      }
+    </script>
+    <script>
+      'use strict';
+      const DATA = JSON.parse(document.getElementById('snapshot').textContent);
+      const main = document.getElementById('main');
+      const int = (n) => (n == null ? 'No data' : new Intl.NumberFormat('en-US').format(n));
+      const dec = (n) =>
+        n == null
+          ? 'No data'
+          : new Intl.NumberFormat('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            }).format(n);
+      const esc = (s) =>
+        String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;',
+            })[c],
+        );
+      const paths = {
+        grid: /* HTML */ `
+          <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+          <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+          <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+        `,
+        search: /* HTML */ `
+          <circle cx="10.5" cy="10.5" r="6.5"></circle>
+          <path d="m16 16 5 5"></path>
+        `,
+        chart: /* HTML */ `
+          <path d="M4 3v17h17M8 16v-5m5 5V6m5 10v-8"></path>
+        `,
+        trophy: /* HTML */ `
+          <path
+            d="M8 3h8v5a4 4 0 0 1-8 0V3Zm0 2H4v2a4 4 0 0 0 4 4m8-6h4v2a4 4 0 0 1-4 4m-4 1v6m-4 3h8m-7-3h6"></path>
+        `,
+        arrow: /* HTML */ `
+          <path d="M4 12h15m-6-6 6 6-6 6"></path>
+        `,
+        users: /* HTML */ `
+          <circle cx="9" cy="7" r="3"></circle>
+          <path d="M3 21v-3a6 6 0 0 1 12 0v3m1-17a3 3 0 0 1 0 6m3 11v-3a6 6 0 0 0-3-5"></path>
+        `,
+        book: /* HTML */ `
+          <path
+            d="M12 6a10 10 0 0 0-9-2v15a10 10 0 0 1 9 2m0-15a10 10 0 0 1 9-2v15a10 10 0 0 0-9 2V6Z"></path>
+        `,
+        info: /* HTML */ `
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 11v6m0-10v.1"></path>
+        `,
+        retry: /* HTML */ `
+          <path d="M3 11a9 9 0 1 1 2 7M3 4v7h7"></path>
+        `,
+        empty: /* HTML */ `
+          <path d="M4 5h16v15H4zM8 2v6m8-6v6M8 12h8m-8 4h4"></path>
+        `,
+        alert: /* HTML */ `
+          <path d="m12 3 10 18H2L12 3Zm0 6v5m0 3v.1"></path>
+        `,
+      };
+      const icon = (name) => /* HTML */ `
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.chart}</svg>
+      `;
+      const routes = {
+        '/': ['Dashboard', 'grid'],
+        '/scores': ['Score lookup', 'search'],
+        '/reports': ['Subject reports', 'chart'],
+        '/rankings': ['Rankings', 'trophy'],
+      };
+      let subjectKey = 'toan',
+        groupKey = 'A00',
+        review = 'ready',
+        lookupTimer = null;
+      const subject = () => DATA.subjects.find((s) => s.key === subjectKey) || DATA.subjects[0];
+      const group = () => DATA.combinations.find((g) => g.key === groupKey) || DATA.combinations[0];
+      const subjectOptions = () =>
+        DATA.subjects
+          .map(
+            (s) => /* HTML */ `
+              <option value="${s.key}" ${s.key === subjectKey ? 'selected' : ''}>${s.name}</option>
+            `,
+          )
+          .join('');
+      const groupOptions = () =>
+        DATA.combinations
+          .map(
+            (g) => /* HTML */ `
+              <option value="${g.key}" ${g.key === groupKey ? 'selected' : ''}>${g.key}</option>
+            `,
+          )
+          .join('');
+      const groupNames = (g) =>
+        g.subjects
+          .map((i) => (g.english && i === 2 ? 'English' : DATA.subjects[i].short))
+          .join(' + ');
+
+      function heading(eyebrow = 'National high school exam · 2024', action = '') {
+        return /* HTML */ `
+          <div class="page-heading">
+            <h1 class="eyebrow">${eyebrow}</h1>
+            ${action}
+          </div>
+        `;
+      }
+
+      function metric(label, value, note, kind = 'chart') {
+        return /* HTML */ `
+          <article class="metric">
+            <div class="metric-label">
+              <span>${label}</span>
+              ${icon(kind)}
+            </div>
+            <strong class="metric-value">${value}</strong>
+            <div class="metric-note">${note}</div>
+          </article>
+        `;
+      }
+
+      const bandLabels = ['Below 4', '4 to below 6', '6 to below 8', '8 to 10'];
+      const bandRules = ['[0; 4)', '[4; 6)', '[6; 8)', '[8; 10]'];
+      const bandColors = ['var(--low)', 'var(--middle)', 'var(--good)', 'var(--high)'];
+
+      function legend() {
+        return /* HTML */ `
+          <div class="legend">
+            ${bandLabels
+              .map(
+                (l, i) => /* HTML */ `
+                  <span>
+                    <i class="swatch" style="background:${bandColors[i]}"></i>
+                    ${l}
+                  </span>
+                `,
+              )
+              .join('')}
+          </div>
+        `;
+      }
+
+      function bandChart() {
+        return /* HTML */ `
+          <section class="panel" aria-labelledby="bands-title">
+            <div class="panel-header">
+              <div class="section-top" style="width:100%">
+                <div>
+                  <h2 id="bands-title">Score bands by subject</h2>
+                  <p class="sub">Candidate share across 4 score bands · 9 subjects · 2024</p>
+                </div>
+                ${legend()}
+              </div>
+            </div>
+            <div
+              class="band-chart"
+              role="img"
+              aria-label="100 percent stacked bars by subject. A table of counts and percentages follows.">
+              ${DATA.subjects
+                .map(
+                  (s) => /* HTML */ `
+                    <div class="band-row">
+                      <span class="band-label">${s.short}</span>
+                      <div class="band-track">
+                        ${s.bands
+                          .map(
+                            (n, i) => /* HTML */ `
+                              <div
+                                class="band-segment"
+                                style="width:${(n / s.valid) * 100}%;background:${bandColors[i]}"
+                                title="${s.name} · ${bandLabels[i]}: ${int(n)} (${dec((n / s.valid) * 100)}%)"></div>
+                            `,
+                          )
+                          .join('')}
+                      </div>
+                      <span class="band-total">${int(s.valid)}</span>
+                    </div>
+                  `,
+                )
+                .join('')}
+              <div class="band-axis">
+                <span>0%</span>
+                <span>25%</span>
+                <span>50%</span>
+                <span>75%</span>
+                <span>100%</span>
+              </div>
+            </div>
+            <details class="chart-details">
+              <summary>View counts and percentages</summary>
+              <div class="table-wrap">
+                <table class="data-table">
+                  <caption class="sr-only">
+                    Candidate counts and percentages across 4 score bands, 2024
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">Subject</th>
+                      ${bandLabels
+                        .map(
+                          (l) => /* HTML */ `
+                            <th scope="col" class="num">${l}</th>
+                          `,
+                        )
+                        .join('')}
+                      <th scope="col" class="num">Valid scores</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${DATA.subjects
+                      .map(
+                        (s) => /* HTML */ `
+                          <tr>
+                            <th scope="row">${s.name}</th>
+                            ${s.bands
+                              .map(
+                                (n) => /* HTML */ `
+                                  <td class="num">${int(n)} · ${dec((n / s.valid) * 100)}%</td>
+                                `,
+                              )
+                              .join('')}
+                            <td class="num">${int(s.valid)}</td>
+                          </tr>
+                        `,
+                      )
+                      .join('')}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+            <div class="chart-foot">
+              <span>Score bands: ${bandRules.join(' · ')}.</span>
+              <span>
+                Percentages use valid scores in each subject. These are not graduation pass rates.
+              </span>
+            </div>
+          </section>
+        `;
+      }
+
+      function histogram(bins, max, id) {
+        const peak = Math.max(...bins),
+          scale = Math.ceil(peak / 10000) * 10000 || 1,
+          step = max / bins.length,
+          peakIndex = bins.indexOf(peak);
+        const label = (i) =>
+          `[${dec(i * step)}; ${dec((i + 1) * step)}${i === bins.length - 1 ? ']' : ')'}`;
+        const description = (i) =>
+          `${label(i)} points: ${int(bins[i])} candidates · ${dec((bins[i] / bins.reduce((a, b) => a + b, 0)) * 100)}%`;
+        return /* HTML */ `
+          <div class="chart-body">
+            <p class="chart-caption">Candidates</p>
+            <div class="hist">
+              <div class="y-axis" aria-hidden="true">
+                ${[1, 0.75, 0.5, 0.25, 0]
+                  .map(
+                    (k) => /* HTML */ `
+                      <span>${int(scale * k)}</span>
+                    `,
+                  )
+                  .join('')}
+              </div>
+              <div class="plot" aria-label="Score distribution. Use Tab to inspect each interval.">
+                ${bins
+                  .map(
+                    (n, i) => /* HTML */ `
+                      <div
+                        role="img"
+                        class="bin ${i === peakIndex ? 'peak' : ''}"
+                        tabindex="0"
+                        data-chart="${id}"
+                        data-hint="${esc(description(i))}"
+                        aria-label="${esc(description(i))}">
+                        <div class="bar" style="height:${(n / scale) * 100}%"></div>
+                      </div>
+                    `,
+                  )
+                  .join('')}
+              </div>
+            </div>
+            <div class="x-axis" aria-hidden="true">
+              ${[0, 0.2, 0.4, 0.6, 0.8, 1]
+                .map(
+                  (n) => /* HTML */ `
+                    <span>${n * max}</span>
+                  `,
+                )
+                .join('')}
+            </div>
+            <p class="chart-caption" style="text-align:right">
+              ${max === 10 ? 'Subject score' : 'Combination total'} →
+            </p>
+            <p id="${id}-hint" class="hist-hint" aria-live="polite">
+              <strong>Most common interval:</strong>
+              ${description(peakIndex)}
+            </p>
+          </div>
+          <details class="chart-details">
+            <summary>View all ${bins.length} score intervals</summary>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption class="sr-only">
+                  Score distribution for ${max === 10 ? subject().name : group().key}, 2024
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Score interval</th>
+                    <th scope="col" class="num">Candidates</th>
+                    <th scope="col" class="num">Share</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${bins
+                    .map(
+                      (n, i) => /* HTML */ `
+                        <tr>
+                          <th scope="row">${label(i)}</th>
+                          <td class="num">${int(n)}</td>
+                          <td class="num">${dec((n / bins.reduce((a, b) => a + b, 0)) * 100)}%</td>
+                        </tr>
+                      `,
+                    )
+                    .join('')}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        `;
+      }
+
+      function distribution(withFilter = true) {
+        const s = subject();
+        return /* HTML */ `
+          <div class="split">
+            <section class="panel" aria-labelledby="subject-hist-title">
+              <div class="panel-header">
+                <div>
+                  <h2 id="subject-hist-title">${s.name} score distribution · 2024</h2>
+                  <p class="sub">${int(s.valid)} valid scores · 20 intervals of 0.5 points</p>
+                </div>
+                ${
+                  withFilter
+                    ? /* HTML */ `
+                        <label class="select-label">
+                          <span class="sr-only">Choose a subject</span>
+                          <select class="filter" id="subject-filter">
+                            ${subjectOptions()}
+                          </select>
+                        </label>
+                      `
+                    : ''
+                }
+              </div>
+              ${histogram(s.bins, 10, 'subject-chart')}
+              <div class="chart-foot">
+                <span>Score range 0–10 · Candidate counts start at zero.</span>
+                <span>The final interval [9.5; 10] includes 10.</span>
+              </div>
+            </section>
+            <aside class="panel" aria-labelledby="summary-title">
+              <div class="panel-header">
+                <div>
+                  <h2 id="summary-title">${s.name} at a glance</h2>
+                  <p class="sub">Same population as the chart</p>
+                </div>
+              </div>
+              <dl class="stat-list">
+                ${[
+                  ['Mean score', dec(s.mean)],
+                  ['Median', dec(s.median)],
+                  ['Standard deviation', dec(s.std)],
+                  ['Valid scores', int(s.valid)],
+                  ['Scores of 0', int(s.zero)],
+                  ['Scores of 10', int(s.ten)],
+                ]
+                  .map(
+                    ([k, v]) => /* HTML */ `
+                      <div>
+                        <dt>${k}</dt>
+                        <dd>${v}</dd>
+                      </div>
+                    `,
+                  )
+                  .join('')}
+              </dl>
+              <p class="callout">
+                ${
+                  s.key === 'ngoai_ngu'
+                    ? /* HTML */ `
+                        Includes
+                        <strong>all foreign-language codes</strong>
+                        , not only English.
+                      `
+                    : /* HTML */ `
+                        Highest score:
+                        <strong>${dec(s.max)}</strong>
+                        . Excludes ${int(s.missing)} candidates with missing scores in this subject.
+                      `
+                }
+              </p>
+            </aside>
+          </div>
+        `;
+      }
+
+      function overviewTable() {
+        return /* HTML */ `
+          <section class="panel">
+            <div class="table-title">
+              <div>
+                <h2>All 9 subjects at a glance</h2>
+                <p class="small muted" style="margin-top:5px">
+                  Missing scores are listed separately and never counted as zero.
+                </p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table">
+                <caption class="sr-only">Statistics for all 9 subjects in 2024</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Subject</th>
+                    <th scope="col" class="num">Valid scores</th>
+                    <th scope="col" class="num">Missing scores</th>
+                    <th scope="col" class="num">Mean</th>
+                    <th scope="col" class="num">Lowest</th>
+                    <th scope="col" class="num">Highest</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${DATA.subjects
+                    .map(
+                      (s) => /* HTML */ `
+                        <tr>
+                          <th
+                            scope="row"
+                            style="font-weight:500;background:transparent;text-transform:none;letter-spacing:0;font-size:12px">
+                            <a class="subject-cell" href="#/reports?subject=${s.key}">
+                              <span class="subject-mark" aria-hidden="true">
+                                ${s.short.slice(0, 1)}
+                              </span>
+                              ${s.name}
+                            </a>
+                          </th>
+                          <td class="num">${int(s.valid)}</td>
+                          <td class="num muted">${int(s.missing)}</td>
+                          <td class="num">
+                            <strong>${dec(s.mean)}</strong>
+                          </td>
+                          <td class="num">${dec(s.min)}</td>
+                          <td class="num">${dec(s.max)}</td>
+                        </tr>
+                      `,
+                    )
+                    .join('')}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        `;
+      }
+
+      function rankingTable(g, limit = 10) {
+        return /* HTML */ `
+          <div class="table-wrap">
+            <table class="data-table">
+              <caption class="sr-only">Top ${limit} candidates for ${g.key}, 2024</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Position</th>
+                  <th scope="col">Registration number</th>
+                  ${g.subjects
+                    .map(
+                      (i) => /* HTML */ `
+                        <th scope="col" class="num">
+                          ${g.english && i === 2 ? 'English' : DATA.subjects[i].short}
+                        </th>
+                      `,
+                    )
+                    .join('')}
+                  <th scope="col" class="num">Total score</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${g.top
+                  .slice(0, limit)
+                  .map(
+                    (r, i) => /* HTML */ `
+                      <tr>
+                        <td>
+                          <span class="rank rank-${i + 1}">${i + 1}</span>
+                        </td>
+                        <td>
+                          <a
+                            class="mono"
+                            href="#/scores?sbd=${r.sbd}"
+                            aria-label="Look up registration number ${r.sbd}">
+                            ${r.sbd}
+                          </a>
+                        </td>
+                        ${r.scores
+                          .map(
+                            (v) => /* HTML */ `
+                              <td class="num">${dec(v)}</td>
+                            `,
+                          )
+                          .join('')}
+                        <td class="num total-score">${dec(r.total)}</td>
+                      </tr>
+                    `,
+                  )
+                  .join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      function combinationChart() {
+        const g = group();
+        return /* HTML */ `
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h2>${g.key} total-score distribution · 2024</h2>
+                <p class="sub">${groupNames(g)} · ${int(g.valid)} candidates with all 3 scores</p>
+              </div>
+            </div>
+            ${histogram(g.bins, 30, 'combination-chart')}
+            <div class="chart-foot">
+              <span>30 intervals of 1 point · Unweighted total.</span>
+              <span>The final interval [29; 30] includes 30.</span>
+            </div>
+          </section>
+        `;
+      }
+
+      function dashboard() {
+        const s = subject(),
+          g = group();
+        return (
+          heading(
+            'G-Scores / Dashboard',
+            /* HTML */ `
+              <a class="btn" href="#/scores">${icon('search')}Look up exam scores</a>
+            `,
+          ) +
+          /* HTML */ `
+            <div class="metrics">
+              ${metric('Total candidates', int(DATA.total), 'Unique registration numbers', 'users')}${metric('Subjects available', '09', 'All 9 subjects in the dataset', 'book')}${metric(`${s.short} scores`, int(s.valid), `${dec((s.valid / DATA.total) * 100)}% of all candidates`)}${metric(`${s.short} mean`, dec(s.mean), 'On a 10-point scale')}
+            </div>
+          ` +
+          distribution() +
+          bandChart() +
+          /* HTML */ `
+            <section class="panel">
+              <div class="table-title">
+                <div>
+                  <h2>Leading scores</h2>
+                  <p class="small muted" style="margin-top:5px">${g.key} · ${groupNames(g)}</p>
+                </div>
+                <label class="select-label">
+                  Combination
+                  <select class="filter" id="group-filter">
+                    ${groupOptions()}
+                  </select>
+                </label>
+              </div>
+              <div class="rank-preview">
+                <div>
+                  ${rankingTable(g, 3)}
+                  <div style="padding:18px 24px">
+                    <a class="inline-link" href="#/rankings?group=${g.key}">
+                      View full top 10 ${icon('arrow')}
+                    </a>
+                  </div>
+                </div>
+                <div class="preview-side">
+                  <div class="mini-stat">
+                    <span class="metric-note">Eligible candidates</span>
+                    <strong class="metric-value">${int(g.valid)}</strong>
+                  </div>
+                  <div class="mini-stat">
+                    <span class="metric-note">Mean total / 30</span>
+                    <strong class="metric-value">${dec(g.mean)}</strong>
+                  </div>
+                  <div class="mini-stat">
+                    <span class="metric-note">Highest total / 30</span>
+                    <strong class="metric-value">${dec(g.max)}</strong>
+                  </div>
+                </div>
+              </div>
+            </section>
+          ` +
+          combinationChart() +
+          overviewTable() +
+          /* HTML */ `
+            <p class="notice">
+              ${icon('info')} Combinations require all 3 scores. A01, D01 and D07 require English
+              (N1). Candidates may qualify for several combinations; do not add these counts to find
+              the total number of candidates.
+            </p>
+          `
+        );
+      }
+
+      function reports() {
+        const s = subject();
+        return (
+          heading('G-Scores / Subject reports') +
+          /* HTML */ `
+            <div class="metrics">
+              ${metric(`${s.short} scores`, int(s.valid), 'Candidates with a valid score only', 'users')}${metric('Mean score', dec(s.mean), s.name)}${metric('Median', dec(s.median), 'Middle value of the score population')}${metric('Standard deviation', dec(s.std), 'Population standard deviation')}
+            </div>
+          ` +
+          distribution() +
+          bandChart() +
+          overviewTable()
+        );
+      }
+
+      function rankings() {
+        const g = group();
+        return (
+          heading('G-Scores / Rankings') +
+          /* HTML */ `
+            <div class="group-tabs" role="group" aria-label="Choose an exam combination">
+              ${DATA.combinations
+                .map(
+                  (c) => /* HTML */ `
+                    <button
+                      class="group-tab"
+                      id="tab-${c.key}"
+                      data-group="${c.key}"
+                      aria-pressed="${c.key === g.key}">
+                      <strong>${c.key}</strong>
+                      <span>${groupNames(c)}</span>
+                    </button>
+                  `,
+                )
+                .join('')}
+            </div>
+            <div class="metrics">
+              ${metric('All 3 scores available', int(g.valid), `Combination ${g.key}`, 'users')}${metric('Mean total score', dec(g.mean), 'Unweighted total / 30')}${metric('Highest total score', dec(g.max), 'Excludes priority points', 'trophy')}${metric('Maximum possible', '30.00', groupNames(g), 'book')}
+            </div>
+            <div class="group-rule">
+              ${icon('info')}
+              <div>
+                <strong>${g.key} = ${groupNames(g)}.</strong>
+                Only candidates with all 3 scores are
+                included.${g.english ? ' English is required (language code N1).' : ''} Zero is
+                valid; missing scores are never replaced with zero.
+              </div>
+            </div>
+          ` +
+          combinationChart() +
+          /* HTML */ `
+            <section class="panel">
+              <div class="table-title">
+                <div>
+                  <h2>Top 10 candidates · ${g.key}</h2>
+                  <p class="small muted" style="margin-top:5px">
+                    2024 · Select a registration number to view all subject scores.
+                  </p>
+                </div>
+                <span class="edition">Total score / 30</span>
+              </div>
+              ${rankingTable(g)}
+              <p class="table-note">
+                Ordered by total score, highest first. Tied totals use ascending registration
+                numbers for display. This is a dataset leaderboard, not an admission result.
+              </p>
+            </section>
+          `
+        );
+      }
+
+      function emptyResult() {
+        return /* HTML */ `
+          <div class="result-empty">
+            <div class="empty-icon">${icon('search')}</div>
+            <h2>Your exam scores, right here.</h2>
+            <p>
+              Enter your registration number to view your 2024 national high school exam scores.
+            </p>
+            <span class="small muted">Keep any leading zeros in your registration number.</span>
+          </div>
+        `;
+      }
+
+      function scoresPage() {
+        const samples = [
+          '01000001',
+          '01000002',
+          Object.values(DATA.samples).find((c) => c.scores.some((s) => s === 0)).sbd,
+        ];
+        return (
+          heading('G-Scores / Score lookup') +
+          /* HTML */ `
+            <div class="lookup-layout">
+              <section class="panel">
+                <form id="lookup-form" class="lookup-form" novalidate>
+                  <h2>Find your results</h2>
+                  <p class="helper">
+                    Enter the exact 8-digit number on your exam registration slip.
+                  </p>
+                  <div class="field">
+                    <label for="sbd">Registration number</label>
+                    <input
+                      id="sbd"
+                      name="sbd"
+                      type="text"
+                      inputmode="numeric"
+                      pattern="[0-9]{8}"
+                      autocomplete="off"
+                      placeholder="Example: 01000001"
+                      aria-describedby="sbd-help sbd-error"
+                      aria-invalid="false" />
+                    <span class="helper" id="sbd-help">
+                      Exactly 8 digits, including any leading zeros.
+                    </span>
+                    <span id="sbd-error" class="field-error" role="alert"></span>
+                  </div>
+                  <button class="btn btn-primary" id="lookup-submit" type="submit">
+                    ${icon('search')}Score lookup
+                  </button>
+                  <div class="sample-area">
+                    <p class="helper" style="margin-bottom:9px">Try a sample registration number</p>
+                    <div class="samples">
+                      ${samples
+                        .map(
+                          (s) => /* HTML */ `
+                            <button class="sample-btn mono" type="button" data-sample="${s}">
+                              ${s}
+                            </button>
+                          `,
+                        )
+                        .join('')}
+                    </div>
+                  </div>
+                </form>
+                <div class="lookup-note">
+                  <strong>Reading your results</strong>
+                  <br />
+                  A score of 0 is valid.
+                  <br />
+                  Missing scores appear as “Not taken / unavailable”.
+                  <br />
+                  <br />
+                  This prototype supports the samples above and registration numbers in the top 10.
+                  Other numbers show the sample not-found state.
+                </div>
+              </section>
+              <section
+                class="panel"
+                id="lookup-result"
+                aria-label="Lookup results"
+                aria-busy="false">
+                ${emptyResult()}
+              </section>
+            </div>
+          `
+        );
+      }
+
+      function resultMarkup(candidate) {
+        return /* HTML */ `
+          <div class="result-head">
+            <div>
+              <span class="eyebrow muted">Exam results · 2024</span>
+              <h2 class="mono" tabindex="-1" id="result-sbd">${candidate.sbd}</h2>
+            </div>
+            <span class="status-label">Results found</span>
+          </div>
+          <div class="score-grid">
+            ${DATA.subjects
+              .map(
+                (s, i) => /* HTML */ `
+                  <div class="subject-score">
+                    <h3>
+                      ${s.name}${i === 2 && candidate.language ? ` · ${candidate.language === 'N1' ? 'English (N1)' : esc(candidate.language)}` : ''}
+                    </h3>
+                    ${
+                      candidate.scores[i] == null
+                        ? /* HTML */ `
+                            <strong class="missing">
+                              Not taken /
+                              <br />
+                              unavailable
+                            </strong>
+                          `
+                        : /* HTML */ `
+                            <strong>
+                              ${dec(candidate.scores[i] / 100)}
+                              <span class="point-scale">/ 10</span>
+                            </strong>
+                          `
+                    }
+                  </div>
+                `,
+              )
+              .join('')}
+          </div>
+          ${
+            [0, 3, 4].every((i) => candidate.scores[i] != null)
+              ? /* HTML */ `
+                  <div class="result-group">
+                    <span>
+                      Total score A00
+                      <br />
+                      <span class="small muted">Math + Physics + Chemistry</span>
+                    </span>
+                    <strong>
+                      ${dec([0, 3, 4].reduce((n, i) => n + candidate.scores[i], 0) / 100)}
+                      <span class="small muted">/ 30</span>
+                    </strong>
+                  </div>
+                `
+              : ''
+          }
+          <p class="results-note">
+            Missing scores are never replaced with zero. Combination totals are unweighted and
+            exclude priority points.
+          </p>
+        `;
+      }
+
+      function loadingMarkup() {
+        return /* HTML */ `
+          <div class="skeleton-layout" role="status">
+            <p class="loading-message">Loading exam data…</p>
+            <div class="skeleton-row" aria-hidden="true">
+              ${Array(4)
+                .fill(/* HTML */ `
+                  <div class="skeleton"></div>
+                `)
+                .join('')}
+            </div>
+            <div class="skeleton-chart" aria-hidden="true"></div>
+          </div>
+        `;
+      }
+
+      function stateMarkup(state) {
+        if (state === 'loading')
+          return /* HTML */ `
+            <section class="panel page-state" aria-busy="true">${loadingMarkup()}</section>
+          `;
+        const isError = state === 'error';
+        return /* HTML */ `
+          <section class="panel result-empty page-state">
+            <div class="empty-icon ${isError ? 'error-icon' : ''}">
+              ${icon(isError ? 'alert' : 'empty')}
+            </div>
+            <h2>${isError ? 'Unable to load data.' : 'No data for 2024 yet.'}</h2>
+            <p>
+              ${isError ? 'The data connection is unavailable. Retry to continue.' : 'Exam data is not ready yet. Statistics and rankings will appear when the dataset is available.'}
+            </p>
+            <button class="btn ${isError ? 'btn-primary' : ''}" id="retry">
+              ${icon(isError ? 'retry' : 'arrow')}${isError ? 'Retry' : 'View sample data'}
+            </button>
+          </section>
+        `;
+      }
+
+      function announce(message) {
+        document.getElementById('announcer').textContent = message;
+      }
+
+      function lookup(value) {
+        const input = document.getElementById('sbd'),
+          error = document.getElementById('sbd-error');
+        value = value.trim();
+        input.value = value;
+        clearTimeout(lookupTimer);
+        if (!/^[0-9]{8}$/.test(value)) {
+          input.setAttribute('aria-invalid', 'true');
+          error.textContent = 'Enter exactly 8 digits. Example: 01000001.';
+          input.focus();
+          return;
+        }
+        input.setAttribute('aria-invalid', 'false');
+        error.textContent = '';
+        const result = document.getElementById('lookup-result'),
+          submit = document.getElementById('lookup-submit');
+        result.innerHTML = loadingMarkup();
+        result.setAttribute('aria-busy', 'true');
+        submit.disabled = true;
+        announce('Looking up registration number ' + value);
+        lookupTimer = setTimeout(() => {
+          const candidate = DATA.samples[value];
+          result.setAttribute('aria-busy', 'false');
+          submit.disabled = false;
+          if (candidate) {
+            result.innerHTML = resultMarkup(candidate);
+            document.getElementById('result-sbd').focus({ preventScroll: true });
+            announce('Results found for registration number ' + value);
+          } else {
+            result.innerHTML = /* HTML */ `
+              <div class="result-empty">
+                <div class="empty-icon">${icon('search')}</div>
+                <h2 tabindex="-1" id="not-found">Registration number not found.</h2>
+                <p>
+                  Registration number
+                  <strong class="mono">${esc(value)}</strong>
+                  is not in this prototype. Check the number or choose a sample.
+                </p>
+                <button class="btn" id="edit-sbd">Edit registration number</button>
+              </div>
+            `;
+            document.getElementById('not-found').focus({ preventScroll: true });
+            document.getElementById('edit-sbd').onclick = () => {
+              input.focus();
+              input.select();
+            };
+            announce('Registration number not found in the sample data.');
+          }
+        }, 450);
+      }
+
+      function render(focusMain = false) {
+        clearTimeout(lookupTimer);
+        const raw = location.hash.slice(1) || '/',
+          [route, query] = raw.split('?'),
+          params = new URLSearchParams(query || '');
+        if (params.has('subject'))
+          subjectKey = DATA.subjects.some((s) => s.key === params.get('subject'))
+            ? params.get('subject')
+            : 'toan';
+        if (params.has('group'))
+          groupKey = DATA.combinations.some((g) => g.key === params.get('group'))
+            ? params.get('group')
+            : 'A00';
+        const title = routes[route]?.[0] || 'Page not found';
+        document.title = 'G-Scores · ' + title;
+        document.getElementById('crumb').textContent = title;
+        document.getElementById('nav').innerHTML = Object.entries(routes)
+          .map(
+            ([path, [name, kind]]) => /* HTML */ `
+              <a href="#${path}" ${route === path ? 'aria-current="page"' : ''}>
+                ${icon(kind)}
+                <span>${name}</span>
+              </a>
+            `,
+          )
+          .join('');
+        main.setAttribute('aria-busy', review === 'loading' ? 'true' : 'false');
+        if (!routes[route])
+          main.innerHTML =
+            heading('This page is not available.') +
+            /* HTML */ `
+              <a class="btn" href="#/">Back to dashboard</a>
+            `;
+        else if (review !== 'ready')
+          main.innerHTML = heading('G-Scores / ' + title) + stateMarkup(review);
+        else
+          main.innerHTML = {
+            '/': dashboard,
+            '/scores': scoresPage,
+            '/reports': reports,
+            '/rankings': rankings,
+          }[route]();
+        const sf = document.getElementById('subject-filter');
+        if (sf)
+          sf.onchange = () => {
+            subjectKey = sf.value;
+            history.replaceState(null, '', '#' + route);
+            render();
+            document.getElementById('subject-filter').focus();
+            announce('Selected subject: ' + subject().name);
+          };
+        const gf = document.getElementById('group-filter');
+        if (gf)
+          gf.onchange = () => {
+            groupKey = gf.value;
+            history.replaceState(null, '', '#' + route);
+            render();
+            document.getElementById('group-filter').focus();
+            announce('Selected combination: ' + groupKey);
+          };
+        document.querySelectorAll('[data-group]').forEach(
+          (b) =>
+            (b.onclick = () => {
+              groupKey = b.dataset.group;
+              history.replaceState(null, '', '#/rankings');
+              render();
+              document.getElementById('tab-' + groupKey).focus();
+              announce('Selected combination: ' + groupKey);
+            }),
+        );
+        document.querySelectorAll('[data-hint]').forEach((b) => {
+          const update = () => {
+            document.getElementById(b.dataset.chart + '-hint').textContent = b.dataset.hint;
+          };
+          b.addEventListener('focus', update);
+          b.addEventListener('pointerenter', update);
+        });
+        const form = document.getElementById('lookup-form');
+        if (form) {
+          form.onsubmit = (e) => {
+            e.preventDefault();
+            lookup(document.getElementById('sbd').value);
+          };
+          document
+            .querySelectorAll('[data-sample]')
+            .forEach((b) => (b.onclick = () => lookup(b.dataset.sample)));
+          const sbd = params.get('sbd');
+          if (sbd) lookup(sbd);
+        }
+        const retry = document.getElementById('retry');
+        if (retry)
+          retry.onclick = () => {
+            review = 'ready';
+            document.getElementById('review-state').value = 'ready';
+            render(true);
+            announce('Sample data loaded.');
+          };
+        if (focusMain) main.focus({ preventScroll: true });
+      }
+
+      document.getElementById('review-state').onchange = (e) => {
+        review = e.target.value;
+        render();
+        announce(e.target.selectedOptions[0].textContent);
+      };
+      document.querySelector('.skip').addEventListener('click', (e) => {
+        e.preventDefault();
+        main.focus();
+        main.scrollIntoView();
+      });
+      window.addEventListener('hashchange', () => {
+        if (location.hash === '#main') {
+          main.focus();
+          return;
+        }
+        render(true);
+        window.scrollTo(0, 0);
+      });
+      render();
+    </script>
+  </body>
 </html>

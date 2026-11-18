@@ -13,6 +13,8 @@ services:
       - pgdata:/var/lib/postgresql
 
   app:
+    volumes:
+      - ./data:/data:ro
     build:
       context: .
       target: runtime

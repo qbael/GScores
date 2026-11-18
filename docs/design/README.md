@@ -1,6 +1,8 @@
 # G-Scores — Thiết kế giao diện
 
-Bản thiết kế tương tác cho ứng dụng tra cứu và phân tích điểm thi THPT 2024. Phạm vi bám theo [FEATURES.md](../FEATURES.md) và [kiến trúc](../ARCHITECTURE.md). Giao diện hiển thị hoàn toàn bằng **tiếng Anh**, gồm nhãn môn học, biểu đồ, thông báo lỗi và trạng thái. Số liệu dùng định dạng `en-US` (1,061,605; 6.45). Đây là tài liệu thiết kế; ứng dụng React hiện vẫn là scaffold.
+Bản thiết kế tương tác cho ứng dụng tra cứu và phân tích điểm thi THPT 2024. Phạm vi bám theo [FEATURES.md](../FEATURES.md) và [kiến trúc](../ARCHITECTURE.md). Giao diện hiển thị hoàn toàn bằng **tiếng Anh**, gồm nhãn môn học, biểu đồ, thông báo lỗi và trạng thái. Số liệu dùng định dạng `en-US` (1,061,605; 6.45). Đây là tài liệu thiết kế tham chiếu; ứng dụng React đã triển khai các màn hình này bằng Tailwind CSS và Chart.js, kết nối API thật.
+
+Dashboard trong ứng dụng React hiện chỉ giữ thống kê tổng quan; biểu đồ chi tiết và bảng môn học nằm ở Reports, còn phân phối tổng điểm và top 10 nằm ở Rankings. Prototype và ảnh bên dưới giữ bố cục tham chiếu trước thay đổi này.
 
 **Mở [index.html](index.html) trực tiếp bằng trình duyệt.** Không cần cài thư viện, chạy server, kết nối mạng hay đăng nhập. Thanh màu vàng cuối trang là công cụ duyệt thiết kế, không thuộc giao diện sản phẩm khi triển khai.
 
