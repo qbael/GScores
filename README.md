@@ -2,6 +2,14 @@
 
 A React frontend and NestJS backend for looking up and analyzing 2024 Vietnamese national high school exam scores.
 
+## Demo and deployment
+
+**Live demo:** [**https://g-scores-eight.vercel.app/**](https://g-scores-eight.vercel.app/)
+
+![G-Scores deployment architecture: Vercel frontend, EC2 backend, and RDS PostgreSQL database](docs/diagrams/g-scores-cloud-deployment.png)
+
+## Run locally
+
 Choose either local run method. **Both use PostgreSQL in Docker and share the same persistent database volume.**
 
 | Method | Application runtime | Frontend URL |

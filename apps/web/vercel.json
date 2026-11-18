@@ -1,0 +1,15 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "npm ci",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://56.10.159.40/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "buildCommand": "npm run build"
+}

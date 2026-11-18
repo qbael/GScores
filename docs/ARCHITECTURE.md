@@ -4,9 +4,24 @@ Implemented as a small modular monolith: React in the browser calls a single Nes
 
 Backend and frontend each own their `.env`, Dockerfile, `.dockerignore`, lockfile and `node_modules` under `apps/api` and `apps/web`. PostgreSQL credentials live only in `apps/api/.env`; both Prisma CLI and the API derive their connection URL from those values. The root package only delegates development, build and check commands; it has no dependencies.
 
-![Architecture](diagrams/g-scores-architecture.png)
+[Feature rules](FEATURES.md) · [Local setup](../README.md)
 
-[Editable diagram](diagrams/g-scores-architecture.drawio) · [Feature rules](FEATURES.md) · [Local setup](../README.md)
+## Proposed cloud deployment
+
+Presentation diagram for the proposed Vercel + EC2 + RDS deployment; these cloud resources have not been provisioned.
+
+![Proposed Vercel, EC2 and RDS deployment](diagrams/g-scores-cloud-deployment.png)
+
+[Presentation PNG, 2652 × 1094](diagrams/g-scores-cloud-deployment.png)
+
+The diagram follows the revised draw.io version, with English labels and compact service blocks. This PNG is the only retained diagram artifact and includes its editable draw.io data; open the PNG in diagrams.net to edit it.
+
+AWS resources are deployed only in **ap-southeast-1 (Singapore)**. Vercel remains the managed frontend host; its built-in content delivery still applies, and no separate CDN or deployment in another AWS region is included. See [Vercel static content and regions](https://vercel.com/docs/functions/configuring-functions/region).
+
+- Vercel serves the React/Vite build. The browser keeps the existing same-origin `/api/*` requests; an external rewrite forwards them to `https://<api-domain>/api/*`, preserving NestJS's `/api` prefix. Configure the API rewrite before the SPA fallback to `/index.html`. See [Vercel rewrites](https://vercel.com/docs/routing/rewrites).
+- EC2 runs Nginx for HTTPS on port 443, proxying to NestJS on internal port 3000. Its public subnet needs an internet-gateway route and a public address; the API origin also needs DNS and a valid TLS certificate. Port 3000 stays internal.
+- RDS runs PostgreSQL in a private DB subnet group spanning two Availability Zones within the same VPC in ap-southeast-1 (Singapore). Set public access to **No**; allow inbound TCP 5432 on `SG-DB` only from the EC2 security group `SG-API`. The subnet group does not itself imply a Multi-AZ database deployment. See [RDS in a VPC](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html).
+- Before deployment, configure the rewrites, HTTPS proxy, database TLS with the RDS CA, backend-only database credentials, migrations and the existing CSV seed process. Those runtime and infrastructure changes are outside this diagram update. A single EC2 instance is a single point of failure.
 
 ## Stack
 
