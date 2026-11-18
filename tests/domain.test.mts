@@ -11,6 +11,7 @@ const {
   SubjectsService,
 } = require("../apps/api/dist/subjects/subjects.service.js");
 const { YearPipe } = require("../apps/api/dist/common/year.pipe.js");
+const { databaseUrl } = require("../apps/api/dist/prisma/database-url.js");
 const subjects = new SubjectsService();
 
 test("score bands, inclusive final bins, weighted median and population deviation", () => {
@@ -89,4 +90,27 @@ test("subject and year values use fixed allowlists", () => {
   assert.equal(pipe.transform("2024"), 2024);
   for (const value of ["2023", "2024x", "", ["2024", "2024"]])
     assert.throws(() => pipe.transform(value));
+});
+
+test("database credentials have one source, are URL-encoded and support overrides", () => {
+  const keys = ["DATABASE_URL", "POSTGRES_PASSWORD", "POSTGRES_USER", "POSTGRES_DB", "POSTGRES_HOST", "POSTGRES_PORT"];
+  const original = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+  try {
+    for (const key of keys) delete process.env[key];
+    assert.throws(databaseUrl, /POSTGRES_PASSWORD is required/);
+    process.env.POSTGRES_PASSWORD = "p@ss:/?#%";
+    assert.equal(databaseUrl(), "postgresql://g_scores:p%40ss%3A%2F%3F%23%25@127.0.0.1:5432/g_scores?schema=public");
+    process.env.POSTGRES_USER = "user@name";
+    process.env.POSTGRES_DB = "exam/results";
+    process.env.POSTGRES_HOST = "db";
+    process.env.POSTGRES_PORT = "5433";
+    assert.equal(databaseUrl(), "postgresql://user%40name:p%40ss%3A%2F%3F%23%25@db:5433/exam%2Fresults?schema=public");
+    process.env.DATABASE_URL = "postgresql://explicit-connection";
+    assert.equal(databaseUrl(), process.env.DATABASE_URL);
+  } finally {
+    for (const key of keys) {
+      if (original[key] === undefined) delete process.env[key];
+      else process.env[key] = original[key];
+    }
+  }
 });

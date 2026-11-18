@@ -1,12 +1,12 @@
 # G-Scores architecture
 
-Implemented as a small modular monolith: React in the browser calls a single NestJS application. In Docker, NestJS also serves the compiled frontend. PostgreSQL is the only persistent service.
+Implemented as a small modular monolith: React in the browser calls a single NestJS application. In Docker, a separate Nginx container serves the compiled frontend and proxies `/api` to the NestJS container. PostgreSQL is the only persistent service.
 
-Backend and frontend install dependencies independently under `apps/api/node_modules` and `apps/web/node_modules`, with a lockfile in each app. The root package only delegates development, build and check commands; it has no dependencies.
+Backend and frontend each own their `.env`, Dockerfile, `.dockerignore`, lockfile and `node_modules` under `apps/api` and `apps/web`. PostgreSQL credentials live only in `apps/api/.env`; both Prisma CLI and the API derive their connection URL from those values. The root package only delegates development, build and check commands; it has no dependencies.
 
 ![Architecture](diagrams/g-scores-architecture.png)
 
-[Editable diagram](diagrams/g-scores-architecture.drawio) · [Feature rules](FEATURES.md) · [Setup and checks](../README.md)
+[Editable diagram](diagrams/g-scores-architecture.drawio) · [Feature rules](FEATURES.md) · [Local setup](../README.md)
 
 ## Stack
 

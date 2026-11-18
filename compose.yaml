@@ -6,24 +6,43 @@ services:
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-g_scores}
       POSTGRES_USER: ${POSTGRES_USER:-g_scores}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in apps/api/.env}
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -h 127.0.0.1 -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 2s
+      timeout: 5s
+      retries: 30
 
-  app:
-    volumes:
-      - ./data:/data:ro
+  api:
     build:
-      context: .
+      context: ./apps/api
       target: runtime
+    env_file: ./apps/api/.env
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-g_scores}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-g_scores}?schema=public
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
       PORT: "3000"
       NODE_ENV: production
+    volumes:
+      - ./data:/data:ro
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+    env_file: ./apps/web/.env
+    environment:
+      API_PROXY_TARGET: http://api:3000
     ports:
-      - "127.0.0.1:${APP_PORT:-3000}:3000"
+      - "127.0.0.1:${WEB_PORT:-3000}:80"
+    depends_on:
+      - api
 
 volumes:
   pgdata:

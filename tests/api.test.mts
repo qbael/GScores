@@ -15,17 +15,14 @@ const {
 } = require("./dist/common/database.filter.js");
 const { SeedRepository } = require("./dist/seed/seed.repository.js");
 const { csvHeaders } = require("./dist/seed/parse-result.js");
+const { databaseUrl } = require("./dist/prisma/database-url.js");
 
 // Only this freshly created test database is modified or dropped; the configured database is never seeded or cleared here.
 test(
   "PostgreSQL import, rollback, constraints and HTTP contracts",
   { timeout: 90_000 },
   async () => {
-    assert.ok(
-      process.env.DATABASE_URL,
-      "Set apps/api/.env or DATABASE_URL for PostgreSQL tests.",
-    );
-    const original = process.env.DATABASE_URL;
+    const original = databaseUrl();
     const admin = new Client({ connectionString: original });
     const name = "g_scores_test_" + process.pid;
     const directory = await mkdtemp(join(tmpdir(), "g-scores-test-"));

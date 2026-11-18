@@ -1,8 +1,8 @@
 # G-Scores: Features
 
-References: [Assignment](../README.md), [2024 dataset](../data/diem_thi_thpt_2024.csv), [UI mockup](../mockup-ui.png), [architecture](ARCHITECTURE.md).
+References: [Local setup](../README.md), [2024 dataset](../data/diem_thi_thpt_2024.csv), [UI mockup](../mockup-ui.png), [architecture](ARCHITECTURE.md).
 
-UI design: [interactive prototype, screen inventory, and states](design/README.md). The React implementation follows this design; see the README for current setup and checks.
+UI design: [interactive prototype, screen inventory, and states](design/README.md). The React implementation follows this design; see the README for current setup instructions.
 
 ## 1. Requirements
 
@@ -16,7 +16,7 @@ UI design: [interactive prototype, screen inventory, and states](design/README.m
 | Subject distributions | Required | Provide a 0–10 histogram for each subject using the supplied chart-and-summary layout. Show valid count, mean, median, population standard deviation, and counts of scores equal to 0 and 10 beside it. |
 | Technology stack | Required | React with Hooks, NestJS, Tailwind CSS, TypeScript, PostgreSQL, and Prisma. |
 | Subject management and validation | Required | Use OOP to manage subjects. Validate forms and business rules in both the browser and server. |
-| Monolithic application | Required | One NestJS application owns the business modules and serves the compiled React frontend and REST API. |
+| Monolithic application | Required | One NestJS application owns the business modules and REST API. In Docker, a separate frontend container serves React and proxies API requests to NestJS. |
 | Local execution | Required | Run PostgreSQL with Docker Compose and React/NestJS on the host with `npm run dev`. Node.js 24, npm, Docker Engine, and Docker Compose are required. Full Docker execution remains available. |
 | Documentation | Required | Feature and architecture documents, an editable draw.io architecture diagram with icons and component names, and an exported image. |
 | Responsive layouts | Optional | Polish desktop, tablet, and mobile layouts. Basic keyboard access, readable charts, and overflow handling are required. |
