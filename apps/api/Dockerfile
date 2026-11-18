@@ -29,4 +29,7 @@ COPY --from=build /app/prisma.config.ts ./
 COPY --from=build /app/src/prisma/database-url.ts ./src/prisma/database-url.ts
 USER node
 EXPOSE 3000
+# Nest starts listening after the initial CSV import completes.
+HEALTHCHECK --interval=5s --timeout=3s --start-period=5m --retries=12 \
+    CMD ["node", "--input-type=module", "-e", "const response = await fetch('http://127.0.0.1:3000/api/subjects'); process.exit(response.ok ? 0 : 1);"]
 CMD ["sh", "-c", "npm run db:migrate && exec node dist/main.js"]
