@@ -5,5 +5,5 @@ export function App() {
     document.title = "G-Scores";
   }, []);
 
-  return null;
+  return <div>G-Scores</div>;
 }

@@ -11,17 +11,31 @@ Planned startup: a seed service imports `data/diem_thi_thpt_2024.csv` only when 
 For local development, use **Node.js 24**, npm, and Docker Compose. Only PostgreSQL runs in Docker; React and NestJS run on the host:
 
 ```sh
-npm ci
 cp .env.example .env
-# Use letters, digits, hyphens, or underscores for POSTGRES_PASSWORD.
-# Set the matching password in DATABASE_URL.
-docker compose up -d --wait db
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+npm ci
+# Match POSTGRES_PASSWORD in .env with DATABASE_URL in apps/api/.env.
+docker compose up -d db
 npm run dev
 ```
 
-Open [React](http://localhost:5173); a blank page is expected. Vite proxies `/api` requests to NestJS, with [API readiness](http://localhost:3000/api/health) on port 3000. `npm run dev` loads `.env`, generates Prisma Client, builds the API, and starts both applications with automatic reload. No migration or seed is needed yet.
+Open [React](http://localhost:5173); a blank page is expected. Vite proxies `/api` requests to NestJS on port 3000. The API has no routes yet; unknown `/api` paths return JSON 404 responses. `npm run dev` generates Prisma Client, builds the API, and starts both applications with automatic reload. The API loads `apps/api/.env`; Vite loads `apps/web/.env`. No migration or seed is needed yet.
 
-If port 5432 is busy, change `POSTGRES_PORT` and the port in `DATABASE_URL` together. `PORT` sets the local NestJS port; the Vite proxy follows it. `APP_PORT` sets the browser port for the Docker application (default 3000). Changing PostgreSQL credentials after the database volume has been initialized does not update existing database users.
+Configuration belongs to its workspace:
+
+| Location | Purpose |
+|---|---|
+| `.env` | Shared Docker Compose settings: PostgreSQL credentials, `POSTGRES_PORT`, and Docker `APP_PORT`. |
+| `apps/api/.env` | Local API `PORT` and `DATABASE_URL`. Never put database credentials in the frontend environment. |
+| `apps/api/prisma.config.ts`, `apps/api/prisma/` | Prisma CLI configuration, schema, and migrations. |
+| `apps/api/tsconfig.json` | Backend TypeScript compilation. |
+| `apps/web/.env` | Vite's server-side `API_PROXY_TARGET`, default `http://127.0.0.1:3000`. |
+| `apps/web/vite.config.ts`, `apps/web/tsconfig.json` | Frontend development and compilation. |
+
+The root package only coordinates npm workspaces; the shared Dockerfile builds and packages both applications.
+
+If port 5432 is busy, change `POSTGRES_PORT` in the root `.env` and the URL port in `apps/api/.env` together. If the local API port changes, update `PORT` in `apps/api/.env` and `API_PROXY_TARGET` in `apps/web/.env`, then restart development servers. `APP_PORT` sets the browser port for the Docker application (default 3000). Changing PostgreSQL credentials after the database volume has been initialized does not update existing database users.
 
 Press Ctrl+C to stop React and NestJS. Stop PostgreSQL while keeping its data:
 
@@ -32,20 +46,20 @@ docker compose stop db
 To run the full application in Docker instead:
 
 ```sh
-docker compose up --build -d --wait
+docker compose up --build -d
 ```
 
 Then open [http://localhost:3000](http://localhost:3000). Docker serves the compiled React application through NestJS. PostgreSQL 18 stores its data in the named `pgdata` volume.
 
-Run checks locally after creating `.env`:
+Run checks locally:
 
 ```sh
-node --env-file=.env --run build
+npm run check
+npm run build
 npm test
-npm run test:dev
 ```
 
-Stop any running local dev servers before `test:dev`; it uses ports 3000 and 5173 and checks startup, API proxying, and shutdown without requiring PostgreSQL. Docker bootstrap checks remain available with `docker build --target test -t g-scores-bootstrap-check .`.
+Stop any running local dev servers before `npm test` (also available as `npm run test:dev`); it uses ports 3000 and 5173 and checks startup, API proxying, reload, and shutdown without requiring PostgreSQL. Docker bootstrap checks remain available with `docker build --target test -t g-scores-bootstrap-check .`.
 
 Assignment requirements for later implementation:
 

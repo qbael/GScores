@@ -5,10 +5,14 @@
   "description": "G-Scores NestJS modular monolith",
   "type": "commonjs",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "check": "tsc -p tsconfig.json --noEmit",
-    "start": "node dist/main.js",
-    "test": "node --test dist/health/health.service.spec.js"
+    "db:generate": "prisma generate",
+    "db:validate": "prisma validate",
+    "db:migrate": "prisma migrate deploy",
+    "dev:build": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "dev": "node --env-file-if-exists=.env --watch --watch-preserve-output dist/main.js",
+    "build": "npm run db:generate && tsc -p tsconfig.json",
+    "check": "npm run db:generate && tsc -p tsconfig.json --noEmit",
+    "start": "node --env-file-if-exists=.env dist/main.js"
   },
   "dependencies": {
     "@nestjs/common": "11.2.10",
@@ -18,6 +22,7 @@
     "@prisma/adapter-pg": "7.10.1",
     "@prisma/client": "7.10.1",
     "pg": "8.23.1",
+    "prisma": "7.10.1",
     "reflect-metadata": "0.2.2",
     "rxjs": "7.8.2"
   },

@@ -33,7 +33,7 @@ Editable source: [draw.io diagram](diagrams/g-scores-architecture.drawio).
 | CSV parsing (planned) | [`csv-parse`, streaming API](https://csv.js.org/parse/api/stream/) | Parse headers, quoted fields, and empty cells without loading the 41 MB file into application memory at once. |
 | Input validation (planned) | NestJS `ValidationPipe`, `class-validator`, `class-transformer` | Validate request shapes, reject unexpected fields, and check allowed values. |
 | Packaging and execution | Docker multi-stage build + Docker Compose | Containerized install, build, test, migration, seed, and runtime. |
-| Bootstrap verification | Node.js built-in test runner and strict TypeScript checks | Two database-readiness unit tests; Docker test target also builds both workspaces. |
+| Bootstrap verification | Node.js built-in test runner and strict TypeScript checks | Development startup, URL logging, API proxying, reload, and shutdown checks; Docker test target also builds both workspaces. |
 | Feature verification (planned) | Jest/Supertest and Vitest/React Testing Library as needed | Add focused statistical/import, API integration, and UI checks with their features; these tools are not installed in the bootstrap. |
 
 ### Prisma baseline
@@ -89,7 +89,7 @@ SubjectsService owns subject rules through OOP. Use concrete feature repositorie
 
 The file has a fixed set of nine subjects and 1,061,605 candidate rows. Store one row per candidate and exam year with nullable score columns. This directly reflects the CSV and keeps lookups and three-subject sums straightforward; a generic subject/score join table is unnecessary for the current dataset.
 
-Define persistence models in the root `prisma/schema.prisma`; use feature-local `*.model.ts` files for domain/read projections.
+Define persistence models in `apps/api/prisma/schema.prisma`; use feature-local `*.model.ts` files for domain/read projections.
 
 ### `ExamResult` mapped to `exam_results`
 
@@ -173,7 +173,7 @@ Use a multi-stage Dockerfile: install locked dependencies, generate Prisma Clien
 | Startup (planned) | Apply migrations with the app image, then start NestJS; its seed service imports only into an empty results table before accepting requests. |
 | `pgdata` | Named volume for PostgreSQL persistence. |
 | `data` mount | Mount `./data:/data:ro` on `app` for startup seeding; never expose the CSV as public static content. |
-| Secrets | Runtime environment / untracked `.env`; commit an `.env.example` containing placeholders only. No database URL in browser variables. |
+| Secrets | Keep local API variables in `apps/api/.env` and frontend variables in `apps/web/.env`; the root `.env` is for shared Docker Compose settings. Commit matching `.env.example` files containing placeholders only. No database URL in browser variables. |
 
 See the [README](../README.md) for current local development, Docker startup, checks, and shutdown commands. Business migrations and startup seeding are not implemented yet.
 
@@ -201,6 +201,7 @@ Current workspace structure. Business feature folders are empty placeholders; se
 │   │   │   │   └── rankings/
 │   │   │   ├── styles/
 │   │   │   └── main.tsx
+│   │   ├── .env.example
 │   │   ├── index.html
 │   │   ├── vite.config.ts
 │   │   ├── tsconfig.json
@@ -215,12 +216,14 @@ Current workspace structure. Business feature folders are empty placeholders; se
 │       │   ├── seed/
 │       │   ├── app.module.ts
 │       │   └── main.ts
+│       ├── prisma/
+│       │   ├── schema.prisma
+│       │   └── migrations/
+│       ├── prisma.config.ts
+│       ├── .env.example
 │       ├── tsconfig.json
 │       └── package.json
-├── prisma/
-│   ├── schema.prisma
-│   └── migrations/
-├── prisma.config.ts
+├── scripts/                 # Shared development orchestration and checks
 ├── data/
 ├── docs/
 │   ├── ARCHITECTURE.md
@@ -240,7 +243,7 @@ Current workspace structure. Business feature folders are empty placeholders; se
 
 **Generated files:** Prisma Client is generated into the ignored `apps/api/src/generated/prisma` directory.
 
-npm workspaces share one lockfile.
+Backend configuration and Prisma CLI commands belong to `apps/api`; frontend configuration belongs to `apps/web`. Root npm scripts delegate to those workspaces. npm workspaces share one lockfile; root environment settings and Docker configuration coordinate the combined application.
 
 ## 11. Implementation order and focused verification
 

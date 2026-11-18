@@ -10,3 +10,5 @@ data
 docs
 .env
 .env.*
+**/.env
+**/.env.*
