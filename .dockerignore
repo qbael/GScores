@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+**/dist
+apps/api/src/generated
+.git
+.agents
+.specify
+.idea
+data
+docs
+.env
+.env.*

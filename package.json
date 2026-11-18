@@ -1,0 +1,31 @@
+{
+  "name": "g-scores",
+  "version": "0.1.0",
+  "private": true,
+  "description": "G-Scores TypeScript monolith bootstrap",
+  "workspaces": [
+    "apps/api",
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "predev": "node --env-file=.env --run db:generate && npm run build --workspace=@g-scores/api",
+    "dev": "node --env-file=.env scripts/dev.mjs",
+    "test:dev": "node --test scripts/dev.test.mjs",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "check": "npm run db:generate && npm run check --workspaces",
+    "build": "npm run db:generate && npm run build --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "start": "node apps/api/dist/main.js"
+  },
+  "dependencies": {
+    "prisma": "7.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "typescript": "5.9.3"
+  }
+}
