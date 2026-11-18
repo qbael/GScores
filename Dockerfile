@@ -5,10 +5,11 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 FROM base AS dependencies
-COPY package.json package-lock.json ./
-COPY apps/api/package.json ./apps/api/package.json
-COPY apps/web/package.json ./apps/web/package.json
-RUN npm ci --no-audit --no-fund
+COPY package.json ./
+COPY apps/api/package.json apps/api/package-lock.json ./apps/api/
+COPY apps/web/package.json apps/web/package-lock.json ./apps/web/
+RUN npm ci --prefix apps/api --no-audit --no-fund \
+    && npm ci --prefix apps/web --no-audit --no-fund
 
 FROM dependencies AS build
 COPY apps ./apps
@@ -20,15 +21,14 @@ COPY tests ./tests
 RUN npm run test:unit
 
 FROM build AS production-dependencies
-RUN npm prune --omit=dev
+RUN npm prune --prefix apps/api --omit=dev --no-audit --no-fund
 
 FROM base AS runtime
 ENV NODE_ENV=production
 ENV PORT=3000
-COPY --from=production-dependencies /app/node_modules ./node_modules
-COPY --from=build /app/package.json /app/package-lock.json ./
-COPY --from=build /app/apps/api/package.json ./apps/api/package.json
-COPY --from=build /app/apps/web/package.json ./apps/web/package.json
+COPY --from=production-dependencies /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=build /app/package.json ./
+COPY --from=build /app/apps/api/package.json /app/apps/api/package-lock.json ./apps/api/
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/web/dist ./public
 COPY --from=build /app/apps/api/prisma ./apps/api/prisma

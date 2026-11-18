@@ -2,6 +2,8 @@
 
 Implemented as a small modular monolith: React in the browser calls a single NestJS application. In Docker, NestJS also serves the compiled frontend. PostgreSQL is the only persistent service.
 
+Backend and frontend install dependencies independently under `apps/api/node_modules` and `apps/web/node_modules`, with a lockfile in each app. The root package only delegates development, build and check commands; it has no dependencies.
+
 ![Architecture](diagrams/g-scores-architecture.png)
 
 [Editable diagram](diagrams/g-scores-architecture.drawio) · [Feature rules](FEATURES.md) · [Setup and checks](../README.md)

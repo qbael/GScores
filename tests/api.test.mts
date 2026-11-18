@@ -1,20 +1,20 @@
-import "reflect-metadata";
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-const require = createRequire(import.meta.url);
+const require = createRequire(new URL("../apps/api/package.json", import.meta.url));
+require("reflect-metadata");
 const { Client } = require("pg");
 const { NestFactory } = require("@nestjs/core");
-const { AppModule } = require("../apps/api/dist/app.module.js");
-const { PrismaService } = require("../apps/api/dist/prisma/prisma.service.js");
+const { AppModule } = require("./dist/app.module.js");
+const { PrismaService } = require("./dist/prisma/prisma.service.js");
 const {
   DatabaseFilter,
-} = require("../apps/api/dist/common/database.filter.js");
-const { SeedRepository } = require("../apps/api/dist/seed/seed.repository.js");
-const { csvHeaders } = require("../apps/api/dist/seed/parse-result.js");
+} = require("./dist/common/database.filter.js");
+const { SeedRepository } = require("./dist/seed/seed.repository.js");
+const { csvHeaders } = require("./dist/seed/parse-result.js");
 
 // Only this freshly created test database is modified or dropped; the configured database is never seeded or cleared here.
 test(

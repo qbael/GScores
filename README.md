@@ -1,171 +1,127 @@
 # G-Scores
 
-A small learning project for looking up and analyzing the 2024 Vietnamese national high school exam results. Built with React Hooks, TypeScript, **Tailwind CSS**, **Chart.js**, NestJS, Prisma 7 and PostgreSQL 18.
+An application for looking up and analyzing 2024 Vietnamese national high school exam scores, with a React frontend and a NestJS backend.
 
-## Implemented
+There are two ways to run the project locally. Both use PostgreSQL through Docker Compose and share the data stored in the `pgdata` volume.
 
-- Dashboard with overall candidate, subject, valid-score and missing-score totals; detailed charts and tables stay on Reports and Rankings.
-- Eight-digit registration number lookup, preserving leading zeros, missing scores and valid zero scores.
-- Subject reports with mean, median, population standard deviation, 20 half-point intervals, four score bands and an overview table for all nine subjects.
-- A00, A01, B00, C00, D01 and D07 rankings, 30 one-point intervals and deterministic top 10. English combinations require language code N1.
-- Responsive desktop/mobile screens, accessible tables beside Chart.js charts, loading/empty/error states and Retry.
-- Validated streaming CSV import at startup. Import runs atomically only when the results table is empty; existing rows are never replaced.
+## Shared setup
 
-See [architecture](docs/ARCHITECTURE.md), [feature rules](docs/FEATURES.md), and the [reference UI design](docs/design/README.md).
+- Install Docker Engine or Docker Desktop with Docker Compose, and start Docker.
+- For method 1, also install Node.js 24 and npm on your machine.
+- Make sure the dataset is available at `data/diem_thi_thpt_2024.csv`.
+- Run all commands below from the project root, where `compose.yaml` is located.
 
-## Local development
+### 1. Configure the database
 
-Requirements: Node.js 24, npm, Docker Engine and Docker Compose.
+On the first run, create the configuration file. If `.env` already exists, keep it and check its values instead:
 
 ```sh
 cp .env.example .env
+```
+
+Example `.env` contents:
+
+```dotenv
+APP_PORT=3000
+POSTGRES_PORT=5432
+POSTGRES_DB=g_scores
+POSTGRES_USER=g_scores
+POSTGRES_PASSWORD=your_local_password
+```
+
+Replace `your_local_password` with your own password. With the current connection configuration, use letters, numbers, `_` or `-` to avoid having to encode special characters in the URL.
+
+### 2. Start PostgreSQL with Docker
+
+```sh
+docker compose up -d db
+docker compose exec db sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+```
+
+Continue only when the readiness check reports `accepting connections`. If the database is not ready, wait a few seconds and run the check again.
+
+## Method 1: Run the frontend and backend with npm
+
+### 1. Configure the application
+
+On the first run, create the two configuration files. If they already exist, keep them and update them as needed:
+
+```sh
 cp apps/api/.env.example apps/api/.env
 cp apps/web/.env.example apps/web/.env
-npm ci
-# Match POSTGRES_PASSWORD in .env with DATABASE_URL in apps/api/.env.
-docker compose up -d db
-# If the full Docker app is already running, stop it to free port 3000.
+```
+
+In `apps/api/.env`, set the connection details to match the root `.env` file:
+
+```dotenv
+PORT=3000
+DATABASE_URL=postgresql://g_scores:your_local_password@127.0.0.1:5432/g_scores?schema=public
+```
+
+Adjust the password, username, database name and port to match your configuration. Since the backend runs on your machine, it connects to PostgreSQL through `127.0.0.1` and `POSTGRES_PORT`.
+
+In `apps/web/.env`:
+
+```dotenv
+API_PROXY_TARGET=http://127.0.0.1:3000
+```
+
+If you change the backend `PORT`, update `API_PROXY_TARGET` accordingly.
+
+### 2. Install dependencies and start the application
+
+Stop the application container if you previously used method 2, to free port 3000:
+
+```sh
 docker compose stop app
+npm run setup
 npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173). Vite proxies `/api` to NestJS on port 3000. The first `npm run dev` applies committed migrations, builds the API and starts both apps. The API then imports `data/diem_thi_thpt_2024.csv` before accepting requests. The first import of 1,061,605 rows took about 106 seconds on the development machine; later starts skip it. Wait for the `API:` startup log before using the UI.
+`npm run setup` installs dependencies separately in `apps/api/node_modules` and `apps/web/node_modules`. Run it again when you need to reinstall dependencies or a lockfile changes.
 
-React and NestJS reload automatically. Use Ctrl+C to stop both. PostgreSQL data stays in the Docker volume:
+`npm run dev` automatically applies migrations, builds the backend and starts both the backend and frontend. If the database is empty, the backend imports the CSV before accepting requests; wait for the `API:` log message. Subsequent starts skip the import when data already exists.
+
+- Frontend: [http://localhost:5173](http://localhost:5173).
+- API check: [http://localhost:3000/api/subjects](http://localhost:3000/api/subjects).
+
+The frontend and backend reload automatically when you edit the code. Press `Ctrl+C` in the terminal running `npm run dev` to stop both. To stop the database as well:
 
 ```sh
 docker compose stop db
 ```
 
-Configuration is local to each workspace:
+## Method 2: Run everything with Docker
 
-| File | Purpose |
-|---|---|
-| `.env` | Docker PostgreSQL credentials, `POSTGRES_PORT` and `APP_PORT`. |
-| `apps/api/.env` | Host API `PORT` and `DATABASE_URL`. |
-| `apps/web/.env` | Vite proxy `API_PROXY_TARGET`, default `http://127.0.0.1:3000`. No database credentials here. |
-| `apps/api/prisma/` | Prisma schema and committed SQL migrations. |
+Complete **Shared setup** first. This method only requires Docker on your machine; dependencies are installed and the application is built inside the image.
 
-If port 5432 is occupied, change `POSTGRES_PORT` and the port in `DATABASE_URL` together. If the API port changes, update `PORT` and `API_PROXY_TARGET`. Changing PostgreSQL credentials after initializing the volume does not change the existing database user.
-
-## Full Docker application
+If method 1 is running, press `Ctrl+C` in its terminal to free port 3000. Then run:
 
 ```sh
 docker compose up --build -d
-```
-
-Open [http://localhost:3000](http://localhost:3000). The app waits for PostgreSQL, applies migrations, imports the CSV if necessary, and serves React and `/api` from NestJS. The source CSV is mounted read-only and is never served as a public asset.
-
-```sh
 docker compose logs -f app
 ```
 
-Ordinary stops and rebuilds preserve the `pgdata` volume. A failed import rolls back all rows and fails startup; correct the source/configuration and start again. No web upload or manual seeding command is needed.
+Docker builds both the frontend and backend. The application automatically applies migrations and imports the CSV if the database is empty. Wait for the `API:` log message, then open [http://localhost:3000](http://localhost:3000), or use the `APP_PORT` configured in `.env`.
 
-## Checks
+Pressing `Ctrl+C` only stops following the logs; the containers keep running. Compose supplies the database connection automatically through the hostname `db`, so this method does not require `.env` files in `apps/api` or `apps/web`.
 
-```sh
-npm run check
-npm run build
-# Requires the local PostgreSQL service and apps/api/.env.
-# Stop any host Vite development server first: test:dev uses port 5173.
-npm test
-```
-
-`npm test` applies migrations, builds the backend, runs domain tests, creates a separate temporary database for API/import tests, then checks development startup, proxying, reload and shutdown. The PostgreSQL test user needs permission to create a database; the supplied local Docker user has this permission. Only the generated test database is cleared and dropped. `test:dev` uses API port 3002 and web port 5173 and imports the local dataset on first startup if it has not been seeded yet.
-
-For unit tests without PostgreSQL, after building the backend:
+After changing the code, run `docker compose up --build -d` again to rebuild and update the containers. To rebuild completely without the build cache:
 
 ```sh
-npm run test:unit
+docker compose build --no-cache app && docker compose up -d --force-recreate app
 ```
 
-Browser checks require an app running on port 5173 with the provided full dataset and an installed Chrome:
+To stop and remove the containers while keeping the database data:
 
 ```sh
-# Terminal 1
-npm run dev
-# Terminal 2
-npm run test:web
-# Optional overrides: WEB_BASE_URL and CHROME_BIN.
+docker compose down
 ```
 
-Browser checks cover all routes at desktop/tablet/mobile sizes, Chart.js rendering, subject/combination selection, lookup, validation, missing/zero scores, request states, summary-only dashboard rendering and retry. Screenshots are saved under the system temporary directory in `g-scores-ui`.
+## Ports and data persistence
 
-The Docker test target builds both apps and runs domain tests without needing PostgreSQL:
-
-```sh
-docker build --target test -t g-scores-check .
-```
-
-Verified against the full CSV: all nine subjects' statistics/bands/bins and all six combinations' eligibility counts, histograms and top 10 match the UI design snapshot. Local report requests took roughly 0.5–1.3 seconds; no cache, background worker or extra analytics tables are needed for this learning project.
-
-## API
-
-All routes are read-only. `year` defaults to 2024; other years are rejected.
-
-| Route | Response |
-|---|---|
-| `GET /api/subjects` | Nine subject codes and English labels. |
-| `GET /api/combinations` | Six supported combinations and their subject codes. |
-| `GET /api/scores/:registrationNumber` | All nine scores and the foreign-language code. |
-| `GET /api/reports/levels` | Dataset total and all nine subjects' summaries, bands and histogram bins. |
-| `GET /api/reports/subjects/:subject/histogram` | One subject's histogram and statistics. |
-| `GET /api/reports/combinations/:code` | Eligibility, mean/highest total, histogram and top 10. |
-| `GET /api/dashboard?subject=toan&combination=A00` | Subject summaries plus the selected subject and combination report. |
-
-Subject identifiers accept CSV codes (`toan`, `ngu_van`, etc.) or the matching Prisma field names (`mathematics`, `literature`, etc.). Invalid identifiers/year/registration format return 400; an absent registration returns 404; database failures return a safe 503 response. Unknown `/api` routes remain JSON 404 responses. Frontend routes support direct links and refreshes in Docker.
-
-No public deployment has been made. Authentication, administration, CSV web uploads, exports and extra exam years are outside this project scope.
-
----
-
-## Original assignment
-
-# G-Scores
-
-Web developer intern assignment at [Golden Owl](https://goldenowl.asia).
-
-![UI mockup](./mockup-ui.png)
-
-# Requirements
-
-Save the raw data ([diem_thi_thpt_2024.csv](./data/diem_thi_thpt_2024.csv)) into a database with an appropriate structure.
-
-### Must have:
-
-- The conversion of raw data into the database must be coded and located in this source code. (**hint**: recommend use migration and seeder)
-- Write a feature to check score from registration number input
-- Write a feature report. There will be 4 levels including: >=8 points, 8 points > && >=6 points, 6 points > && >= 4 points, < 4 points
-    - Statistics of the number of students with scores in the above 4 levels by subjects. (Chart)
-- List top 10 students of group A including (math, physics, chemistry)
-
-### Nice to have:
-
-- Responsive design (look good on all devices: desktops, tablets & mobile phones).
-- Setup project use Docker.
-- Deploy the application to go live.
-
-# Technical Requirements
-
-### Frontend
-
-Any frontend framework or plain HTML, CSS, and JavaScript is allowed. React implementations must use Hooks.
-
-### Backend
-
-Any backend framework is allowed.
-
-- **Mandatory** use of **OOP programming** for managing subjects.
-- Need form validation and logic tightening.
-- For NodeJs, use TypeScript is a plus.
-- Use ORM for interacting with Database.
-- Database: You can use postgreSQL, Mysql, mongoDB... to manage or cache the data.
-
-# Submission
-
-Push the source code to a remote repository and submit its link. Include local setup instructions and a demo link in `README.md`.
-
-# Contributors
-
-- Edric Cao (from GO)
+- If port 5432 is occupied, change `POSTGRES_PORT` in `.env`. For method 1, also update the port in `DATABASE_URL` in `apps/api/.env`.
+- If port 3000 is occupied, stop the application using it or change the configuration: method 1 uses `PORT` and `API_PROXY_TARGET`; method 2 uses `APP_PORT` in `.env`.
+- Data persists when you stop or recreate containers or rebuild the image. Switching between methods uses the same database.
+- Changing the username or password in `.env` after the volume has been initialized does not update the PostgreSQL credentials automatically. Use the existing credentials or update the database account.
+- `docker compose down -v` deletes the database volume and all imported data. Use it only when you intentionally want to reset the data.

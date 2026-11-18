@@ -19,12 +19,12 @@ function stop(code) {
   }
 }
 
-for (const [workspace, script] of [
-  ["@g-scores/api", "dev:build"],
-  ["@g-scores/api", "dev"],
-  ["@g-scores/web", "dev"],
+for (const [directory, script] of [
+  ["apps/api", "dev:build"],
+  ["apps/api", "dev"],
+  ["apps/web", "dev"],
 ]) {
-  const child = spawn("npm", ["run", script, "--workspace=" + workspace], {
+  const child = spawn("npm", ["run", script, "--prefix", directory], {
     stdio: "inherit",
     detached: true,
   });

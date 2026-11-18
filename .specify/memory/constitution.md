@@ -1,18 +1,14 @@
 <!--
 Sync Impact Report
-- Version change: 1.0.0 -> 1.0.1 (PATCH: English translation; no governance changes).
-- Modified principles (titles, rules, and rationales translated without semantic changes):
-  - I. Accurate Data and Safe Imports.
-  - II. Consistent Statistical Rules.
-  - III. Modular Monolith and OOP Subject Management.
-  - IV. Safe Contracts and Accessible Interfaces.
-  - V. Small Changes and Verification Based on Risk.
-- Updated sections: Technical Constraints and Scope; Development and Verification Workflow;
-  Governance. All content, including this report, is now in English.
-- Added sections: none.
-- Removed sections: none.
+- Version change: 1.0.1 -> 1.1.0 (MINOR: require independent application dependencies).
+- Rationale: the user requested separate backend/frontend dependency management.
+- Updated section: Technical Constraints and Scope. Core principles are unchanged.
+- Feature/data impact: no application behavior or database changes; no database migration.
+- Installation migration: replace the shared lockfile with one per app, remove the old
+  root node_modules, and install each app with npm ci (or npm run setup from the root).
+- Synchronized: package scripts, Dockerfile, API test resolution, README and architecture.
+- Dependent templates/commands: unchanged; no workspace layout is embedded in templates.
 - Follow-up TODOs: none.
-- Dependent templates/commands: unchanged; Spec Kit commands read the constitution at runtime.
 - Review note: remove this Sync Impact Report comment after review, before committing.
 -->
 
@@ -133,8 +129,9 @@ Rationale: a small change is complete only when its important behavior has been 
 ## Technical Constraints and Scope
 
 - The stack is strict TypeScript, React Hooks, Vite, Tailwind CSS, NestJS, Prisma ORM 7,
-  and PostgreSQL; the current baseline is Node.js 24 and PostgreSQL 18. npm workspaces
-  MUST share one lockfile, and Prisma CLI/client/adapter versions MUST remain compatible.
+  and PostgreSQL; the current baseline is Node.js 24 and PostgreSQL 18. Backend and frontend
+  MUST each manage their own package manifest, lockfile and node_modules without a shared
+  npm workspace. Prisma CLI/client/adapter versions MUST remain compatible.
 - Local development MUST support PostgreSQL in Docker Compose and React/NestJS on the host.
   Full Docker execution MUST use one application image serving the API and SPA, alongside
   PostgreSQL with persistent storage. Migration/import commands use the application image
@@ -191,4 +188,4 @@ Rationale: a small change is complete only when its important behavior has been 
   this file; other synchronization work is handled separately. The report comment MUST be
   removed after review, before committing.
 
-**Version**: 1.0.1 | **Ratified**: 2026-11-18 | **Last Amended**: 2026-11-18
+**Version**: 1.1.0 | **Ratified**: 2026-11-18 | **Last Amended**: 2026-11-18

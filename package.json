@@ -3,31 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "description": "G-Scores exam score lookup and reports",
-  "workspaces": [
-    "apps/api",
-    "apps/web"
-  ],
   "engines": {
     "node": ">=24 <25"
   },
   "scripts": {
-    "predev": "npm run db:migrate && npm run build --workspace=@g-scores/api",
+    "setup": "npm ci --prefix apps/api && npm ci --prefix apps/web",
+    "predev": "npm run db:migrate && npm run build --prefix apps/api",
     "dev": "node scripts/dev.mjs",
     "test:dev": "node --test scripts/dev.test.mjs",
-    "db:generate": "npm run db:generate --workspace=@g-scores/api",
-    "db:migrate": "npm run db:migrate --workspace=@g-scores/api",
-    "check": "npm run check --workspaces",
-    "build": "npm run build --workspaces",
+    "db:generate": "npm run db:generate --prefix apps/api",
+    "db:migrate": "npm run db:migrate --prefix apps/api",
+    "check": "npm run check --prefix apps/api && npm run check --prefix apps/web",
+    "build": "npm run build --prefix apps/api && npm run build --prefix apps/web",
     "test": "npm run test:unit && npm run test:api && npm run test:dev",
-    "start": "npm run start --workspace=@g-scores/api",
+    "start": "npm run start --prefix apps/api",
     "prestart": "npm run db:migrate",
-    "pretest": "npm run db:migrate && npm run build --workspace=@g-scores/api",
+    "pretest": "npm run db:migrate && npm run build --prefix apps/api",
     "test:unit": "node --test tests/domain.test.mts",
     "test:api": "node --env-file-if-exists=apps/api/.env --test tests/api.test.mts",
     "test:web": "node --test tests/web.test.mts"
-  },
-  "devDependencies": {
-    "@types/node": "24.19.2",
-    "typescript": "5.9.3"
   }
 }
